@@ -175,7 +175,7 @@ const LoginPage = () => {
             <div className="grid grid-cols-2 items-stretch justify-center">
               <div
                 onClick={() => handleRoleSelect("student")}
-                className={`mx-auto w-36 md:w-44 overflow-hidden cursor-pointer rounded-2xl bg-white shadow-lg hover:shadow-2xl border ${selectedRole == "student" ? `bg-primary-hover/50! border-primary` : `border-transparent bg-white`}`}
+                className={`mx-auto w-36 md:w-44 overflow-hidden cursor-pointer rounded-2xl bg-white shadow-lg hover:shadow-2xl border ${selectedRole == "student" ? `bg-blue-100!` : `border-transparent bg-white`}`}
               >
                 <div className="mx-auto mt-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#f4e3cf]/50">
                   <span>
@@ -192,7 +192,7 @@ const LoginPage = () => {
 
               <div
                 onClick={() => handleRoleSelect("teacher")}
-                className={`mx-auto w-36 md:w-44 overflow-hidden cursor-pointer rounded-2xl bg-white shadow-lg hover:shadow-2xl border ${selectedRole == "teacher" ? `bg-primary-hover/50! border-primary` : `border-transparent bg-white`}`}
+                className={`mx-auto w-36 md:w-44 overflow-hidden cursor-pointer rounded-2xl bg-white shadow-lg hover:shadow-2xl border ${selectedRole == "teacher" ? `bg-blue-100!` : `border-transparent bg-white`}`}
               >
                 <div className="mx-auto mt-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#f4e3cf]/50">
                   <span>
