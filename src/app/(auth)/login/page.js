@@ -4,21 +4,46 @@ import logo from "@/assets/images/logo.jpeg";
 import Spinner from "@/components/Spinner";
 import PasswordInput from "@/components/PasswordInput";
 import { useForm } from "react-hook-form";
-import { FORGOT_PASSWORD_ROUTE, REGISTER_ROUTE } from "@/constants/routes";
+import {
+  FORGOT_PASSWORD_ROUTE,
+  HOME_ROUTE,
+  REGISTER_ROUTE,
+} from "@/constants/routes";
 import { useState } from "react";
 import Link from "next/link";
+import { login } from "@/api/auth";
+import { useRouter } from "next/navigation";
+import useAuthStore from "@/stores/authStore";
+import { toast } from "react-toastify";
+
+
 const LoginPage = () => {
+  const { loginUser } = useAuthStore.getState();
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit } = useForm();
+  const router = useRouter();
 
   const submitForm = (data) => {
     setLoading(true);
-    console.log("Phone-->", data.phone);
-    console.log("Password-->", data.password);
-    setLoading(false);
+    login({
+      phone_number: data.phone_number,
+      password: data.password,
+    })
+      .then((response) => {
+        console.log(response.data);
+        loginUser({ user: response.data });
+        toast.success("Login Successful")
+        router.replace(HOME_ROUTE);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
   return (
-    <section className="mx-auto bg-gray-500 rounded-2xl mt-4">
+    <section className="mx-auto bg-gray-500 rounded-2xl my-4">
       <div className="w-full max-w-md bg-white/90 p-8">
         {/* Header */}
         <div className="flex flex-col items-center justify-center text-center">
@@ -42,7 +67,7 @@ const LoginPage = () => {
           {/* Phone */}
           <div>
             <label
-              htmlFor="phone"
+              htmlFor="phone_number"
               className="block text-sm font-medium text-heading mb-2"
             >
               Phone Number
@@ -55,7 +80,7 @@ const LoginPage = () => {
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300 focus:border-primary focus:ring-4 focus:ring-primary/20"
               required
               autoComplete="off"
-              {...register("phone")}
+              {...register("phone_number")}
             />
           </div>
           {/* Password */}
