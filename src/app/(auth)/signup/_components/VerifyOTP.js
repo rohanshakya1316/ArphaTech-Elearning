@@ -1,7 +1,16 @@
+import { resendOTPCode, verifyOTP } from "@/api/auth";
 import React, { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 
 const VerifyOTP = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({ defaultValues: { otp: "" } });
 
   const inputRefs = useRef([]);
 
@@ -13,6 +22,7 @@ const VerifyOTP = () => {
     newOtp[index] = element.value;
     setOtp(newOtp);
 
+    setValue("otp", newOtp.join(""), { shouldValidate: true });
     // Auto-focus next input field if a digit is entered
     if (element.value !== "" && index < 5) {
       inputRefs.current[index + 1].focus();
@@ -26,11 +36,29 @@ const VerifyOTP = () => {
     }
   };
 
-  const handleOTPSubmit = (e) => {
-    e.preventDefault();
-    const otpValue = otp.join("");
-    console.log("OTP Submitted:", otpValue);
-    // Add your verification logic here
+  const submitOTP = (data) => {
+    console.log("OTP Submitted:", data);
+    verifyOTP({
+      otp: data.otp,
+    })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
+
+  const resendOTP = () => {
+    const phoneNumber = localStorage.getItem("phoneNumber");
+    console.log(phoneNumber);
+    resendOTPCode({ phone_number: phoneNumber })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
   };
 
   return (
@@ -38,12 +66,23 @@ const VerifyOTP = () => {
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6 text-[#4a4a4a]">
         <h2 className="text-md md:text-lg">Verify OTP</h2>
-        <button className="px-4 ml-4 py-2 text-md md:text-lg text-primary transition-colors hover:text-white hover:bg-primary rounded-xl">
+        <button
+          onClick={resendOTP}
+          className="px-4 ml-4 py-2 text-md md:text-lg text-primary transition-colors hover:text-white hover:bg-primary rounded-xl"
+        >
           Resend code
         </button>
       </div>
 
-      <form onSubmit={handleOTPSubmit}>
+      <form onSubmit={handleSubmit(submitOTP)}>
+        <input
+          type="hidden"
+          {...register("otp", {
+            required: "OTP is required",
+            minLength: { value: 6, message: "Please enter all 6 digits" },
+          })}
+        />
+
         {/* OTP Input Boxes */}
         <div className="flex justify-center items-center gap-1.5 md:gap-2 mb-4 md:mb-6">
           {otp.map((data, index) => (
@@ -66,6 +105,13 @@ const VerifyOTP = () => {
               )}
             </React.Fragment>
           ))}
+        </div>
+
+        {/* Display Validation Errors */}
+        <div className="h-6 mb-4 text-center">
+          {errors.otp && (
+            <span className="text-red-500 text-sm">{errors.otp.message}</span>
+          )}
         </div>
 
         {/* Instructions */}

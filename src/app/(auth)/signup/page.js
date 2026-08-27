@@ -15,7 +15,7 @@ import VerifyOTP from "./_components/VerifyOTP";
 
 const SignupPage = () => {
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const { register, handleSubmit, control, setValue } = useForm({
     defaultValues: { role: "" },
@@ -49,6 +49,7 @@ const SignupPage = () => {
     })
       .then((response) => {
         localStorage.setItem("signUpToken", response.data.access);
+        localStorage.setItem("phoneNumber", response.data.phone_number);
         setLoading(false);
         setOpen(true);
       })

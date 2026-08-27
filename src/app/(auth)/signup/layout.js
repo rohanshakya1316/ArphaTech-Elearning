@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Sign In",
-  description: "Sign In for the E-learning",
+  title: "Sign Up",
+  description: "Sign Up for the E-learning",
 };
 const SignInLayout = ({ children }) => {
   return <>{children}</>;
