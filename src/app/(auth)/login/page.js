@@ -77,6 +77,7 @@ const LoginPage = () => {
               type="phone"
               id="phone"
               placeholder="Enter your phone number"
+              maxLength={10}
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300 focus:border-primary focus:ring-4 focus:ring-primary/20"
               required
               autoComplete="off"
