@@ -1,9 +1,15 @@
+"use client";
+
 import { resendOTPCode, verifyOTP } from "@/api/auth";
+import { REGISTER_STUDENT, REGISTER_TEACHER } from "@/constants/routes";
+import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const VerifyOTP = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
+
+  const router = useRouter();
 
   const {
     register,
@@ -36,6 +42,7 @@ const VerifyOTP = () => {
     }
   };
 
+  // ? Need to complete it pending
   const submitOTP = (data) => {
     console.log("OTP Submitted:", data);
     verifyOTP({
@@ -43,9 +50,18 @@ const VerifyOTP = () => {
     })
       .then((response) => {
         console.log(response);
+        if (response.data?.user?.role === "student") {
+          router.replace(REGISTER_STUDENT);
+        } else if (response?.data.user?.role === "instructor") {
+          router.replace(REGISTER_TEACHER);
+        } else {
+          throw new Error(
+            `Role mismatch or missing. Role is: ${response?.data.user?.role}`,
+          );
+        }
       })
       .catch((error) => {
-        console.log(error.response);
+        console.log("Error Caught:", error);
       });
   };
 
@@ -60,6 +76,9 @@ const VerifyOTP = () => {
         console.log(error.response);
       });
   };
+  // ? ====================================
+
+  const handleRegister = () => {};
 
   return (
     <div className="bg-white shadow-2xl p-8 w-full max-w-sm md:max-w-md rounded-sm">
@@ -123,6 +142,7 @@ const VerifyOTP = () => {
         <div className="flex justify-center">
           <button
             type="submit"
+            onClick={handleRegister}
             className="bg-primary text-white text-sm md:text-lg font-medium px-8 py-2 rounded-lg shadow-md hover:bg-primary-hover transition-colors"
           >
             Verify OTP
