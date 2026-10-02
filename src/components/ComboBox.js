@@ -15,6 +15,7 @@ const ComboBox = ({
   validationRules = {},
   labelKey = "name", // allows flexibility if your API uses different keys
   valueKey = "id",
+  mode = "combo",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -24,9 +25,14 @@ const ComboBox = ({
   const textValue = useWatch({ control, name: nameField }) || "";
   const idValue = useWatch({ control, name: idField });
 
-  const filteredOptions = options.filter((option) =>
-    option[labelKey].toLowerCase().includes(textValue.toLowerCase()),
-  );
+  // Determine wheather user can search/type
+  const isSearchable = mode == "combo";
+
+  const filteredOptions = isSearchable
+    ? options.filter((option) =>
+        option[labelKey].toLowerCase().includes(textValue.toLowerCase()),
+      )
+    : options;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -64,6 +70,9 @@ const ComboBox = ({
   };
 
   const handleInputChange = () => {
+    if (!isSearchable) {
+      return;
+    }
     // User is typing instead of selecting, so clear the ID
     if (idField) {
       setValue(idField, null, {
@@ -121,8 +130,9 @@ const ComboBox = ({
           type="text"
           id={idField}
           autoComplete="off"
+          readOnly={!isSearchable}
           placeholder={placeholder}
-          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-10 outline-none transition-all duration-300 focus:border-primary focus:ring-4 focus:ring-primary/20"
+          className={`w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-10 outline-none transition-all duration-300 focus:border-primary focus:ring-4 focus:ring-primary/20 ${!isSearchable ? "cursor-pointer" : ""}`}
           {...register(nameField, {
             ...validationRules,
             onChange: handleInputChange,
