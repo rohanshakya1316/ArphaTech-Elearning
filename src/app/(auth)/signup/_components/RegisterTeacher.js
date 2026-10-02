@@ -172,6 +172,7 @@ const RegisterTeacher = () => {
                 setValue={setValue}
                 control={control}
                 options={institutes}
+                mode="combo"
                 nameField="instituteName"
                 idField="instituteId"
                 placeholder="Select or type your institute"
@@ -198,6 +199,7 @@ const RegisterTeacher = () => {
                 setValue={setValue}
                 register={register}
                 options={subjects}
+                mode="dropdown"
                 nameField="subjects"
                 idField="subjectId"
                 placeholder="Select a subject"
@@ -225,6 +227,7 @@ const RegisterTeacher = () => {
                 setValue={setValue}
                 register={register}
                 options={faculties}
+                mode="dropdown"
                 nameField="faculty_major"
                 idField="facultyId"
                 placeholder="Select or type your faculty / major"
