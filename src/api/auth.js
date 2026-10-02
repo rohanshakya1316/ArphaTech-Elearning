@@ -31,4 +31,18 @@ const completeTeacherSignup = async (data) => {
   );
 };
 
-export { sendOTP, verifyOTP, resendOTPCode, login, completeTeacherSignup };
+const completeStudentSignup = async (data) => {
+  return await api.post(
+    `${config.apiUrl}/api/v1/auth/profile/student/complete/`,
+    data,
+  );
+};
+
+export {
+  sendOTP,
+  verifyOTP,
+  resendOTPCode,
+  login,
+  completeTeacherSignup,
+  completeStudentSignup,
+};
