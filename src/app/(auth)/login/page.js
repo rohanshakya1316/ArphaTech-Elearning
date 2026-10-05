@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import {
   FORGOT_PASSWORD_ROUTE,
   HOME_ROUTE,
+  STUDENT_DASHBOARD_ROUTE,
+  TEACHER_DASHBOARD_ROUTE,
   REGISTER_ROUTE,
 } from "@/constants/routes";
 import { useState } from "react";
@@ -15,7 +17,6 @@ import { login } from "@/api/auth";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/stores/authStore";
 import { toast } from "react-toastify";
-
 
 const LoginPage = () => {
   const { loginUser } = useAuthStore.getState();
@@ -30,13 +31,17 @@ const LoginPage = () => {
       password: data.password,
     })
       .then((response) => {
-        console.log(response.data);
         loginUser({ user: response.data });
-        toast.success("Login Successful")
-        router.replace(HOME_ROUTE);
+        console.log(response);
+        toast.success("Login Successful");
+        if (response.data.user.role === "student")
+          router.replace(STUDENT_DASHBOARD_ROUTE);
+        else if (response.data.user.role === "instructor")
+          router.replace(TEACHER_DASHBOARD_ROUTE);
+        else router.replace(HOME_ROUTE);
       })
       .catch((error) => {
-        console.log(error.response.data);
+        toast.error(`${error.response.data.detail}`);
       })
       .finally(() => {
         setLoading(false);

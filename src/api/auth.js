@@ -38,6 +38,9 @@ const completeStudentSignup = async (data) => {
   );
 };
 
+const logout = async (refreshToken) => {
+  return await axios.post(`${config.apiUrl}/api/v1/auth/logout/`, refreshToken);
+};
 export {
   sendOTP,
   verifyOTP,
@@ -45,4 +48,5 @@ export {
   login,
   completeTeacherSignup,
   completeStudentSignup,
+  logout,
 };
