@@ -4,18 +4,26 @@ import logo from "@/assets/images/logo.jpeg";
 import nepalFlag from "@/assets/images/nepal-flag.svg";
 import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
-import { LOGIN_ROUTE } from "@/constants/routes";
+import VerifyOTP from "@/components/VerifyOTP";
+import { STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
+import {
+  LOGIN_ROUTE,
+  REGISTER_STUDENT_ROUTE,
+  REGISTER_TEACHER_ROUTE,
+} from "@/constants/routes";
 import { GraduationCap, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
-import VerifyOTP from "./_components/VerifyOTP";
 
 const SignupPage = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const router = useRouter();
 
   const { register, handleSubmit, control, setValue } = useForm({
     defaultValues: { role: "" },
@@ -81,6 +89,17 @@ const SignupPage = () => {
     });
   };
 
+  const handleOnSuccessOTP = (data) => {
+    console.log("From Sign Up:", data);
+    if (data?.user?.role === STUDENT_ROLE) {
+      router.replace(REGISTER_STUDENT_ROUTE);
+    } else if (data?.user?.role === TEACHER_ROLE) {
+      router.replace(REGISTER_TEACHER_ROUTE);
+    } else {
+      throw new Error(`Role mismatch or missing. Role is: ${data?.user?.role}`);
+    }
+  };
+
   return (
     <>
       {open && (
@@ -89,7 +108,7 @@ const SignupPage = () => {
           onClick={() => setOpen(false)}
         >
           <div onClick={(e) => e.stopPropagation()}>
-            <VerifyOTP />
+            <VerifyOTP onSuccess={handleOnSuccessOTP} />
           </div>
         </div>
       )}
@@ -211,7 +230,7 @@ const SignupPage = () => {
                 </div>
 
                 <input
-                  type="phone"
+                  type="tel"
                   id="phone"
                   placeholder="Enter your phone number"
                   maxLength={10}
@@ -236,8 +255,8 @@ const SignupPage = () => {
               </h3>
               <div className="grid grid-cols-2 items-stretch justify-center">
                 <div
-                  onClick={() => handleRoleSelect("student")}
-                  className={`mx-auto w-36 md:w-44 overflow-hidden cursor-pointer rounded-2xl bg-white shadow-lg hover:shadow-2xl border ${selectedRole == "student" ? `bg-blue-100!` : `border-transparent bg-white`}`}
+                  onClick={() => handleRoleSelect(STUDENT_ROLE)}
+                  className={`mx-auto w-36 md:w-44 overflow-hidden cursor-pointer rounded-2xl bg-white shadow-lg hover:shadow-2xl border ${selectedRole == STUDENT_ROLE ? `bg-blue-100!` : `border-transparent bg-white`}`}
                 >
                   <div className="mx-auto mt-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#f4e3cf]/50">
                     <span>
@@ -253,8 +272,8 @@ const SignupPage = () => {
                 </div>
 
                 <div
-                  onClick={() => handleRoleSelect("instructor")}
-                  className={`mx-auto w-36 md:w-44 overflow-hidden cursor-pointer rounded-2xl bg-white shadow-lg hover:shadow-2xl border ${selectedRole == "instructor" ? `bg-blue-100!` : `border-transparent bg-white`}`}
+                  onClick={() => handleRoleSelect(TEACHER_ROLE)}
+                  className={`mx-auto w-36 md:w-44 overflow-hidden cursor-pointer rounded-2xl bg-white shadow-lg hover:shadow-2xl border ${selectedRole == TEACHER_ROLE ? `bg-blue-100!` : `border-transparent bg-white`}`}
                 >
                   <div className="mx-auto mt-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#f4e3cf]/50">
                     <span>

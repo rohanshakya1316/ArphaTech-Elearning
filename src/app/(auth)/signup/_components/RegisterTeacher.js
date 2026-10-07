@@ -4,7 +4,7 @@ import { completeTeacherSignup } from "@/api/auth";
 import ComboBox from "@/components/ComboBox";
 import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
-import { HOME_ROUTE } from "@/constants/routes";
+import { TEACHER_DASHBOARD_ROUTE } from "@/constants/routes";
 import { ArrowRight, CloudUpload } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -106,7 +106,7 @@ const RegisterTeacher = () => {
         setLocalVerificationDocument([]);
         setVerificationDocument([]);
         reset();
-        router.replace(HOME_ROUTE);
+        router.replace(TEACHER_DASHBOARD_ROUTE);
       })
       .catch((error) => {
         toast.error(error.response.data);

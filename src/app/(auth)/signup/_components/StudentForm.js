@@ -5,7 +5,7 @@ import { completeStudentSignup } from "@/api/auth";
 import ComboBox from "@/components/ComboBox";
 import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
-import { HOME_ROUTE } from "@/constants/routes";
+import { STUDENT_DASHBOARD_ROUTE } from "@/constants/routes";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -82,7 +82,7 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
       .then((response) => {
         toast.success("Student Sign Up Process Completed!");
         reset();
-        router.replace(HOME_ROUTE);
+        router.replace(STUDENT_DASHBOARD_ROUTE);
       })
       .catch((error) => {
         toast.error(error.response.data);
