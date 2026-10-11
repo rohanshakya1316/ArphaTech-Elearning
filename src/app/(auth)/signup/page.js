@@ -25,9 +25,13 @@ const SignupPage = () => {
 
   const router = useRouter();
 
-  const { register, handleSubmit, control, setValue } = useForm({
-    defaultValues: { role: "" },
-  });
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm({ mode: "onChange", defaultValues: { role: "" } });
 
   // Disable body scroll when OTP modal is open
   useEffect(() => {
@@ -47,6 +51,7 @@ const SignupPage = () => {
   const selectedRole = useWatch({ control, name: "role" });
 
   const submitForm = (data) => {
+    console.log(data);
     setLoading(true);
     sendOTP({
       first_name: data.first_name,
@@ -150,7 +155,13 @@ const SignupPage = () => {
             focus:border-primary focus:ring-4 focus:ring-primary/20"
                   required
                   autoComplete="off"
-                  {...register("first_name")}
+                  {...register("first_name", {
+                    required: "First Name is required",
+                    minLength: {
+                      value: 2,
+                      message: "Name must be at least 2 characters",
+                    },
+                  })}
                 />
               </div>
               {/* Middle Name */}
@@ -169,7 +180,12 @@ const SignupPage = () => {
                   className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300
             focus:border-primary focus:ring-4 focus:ring-primary/20"
                   autoComplete="off"
-                  {...register("middle_name")}
+                  {...register("middle_name", {
+                    minLength: {
+                      value: 2,
+                      message: "Middle Name must be at least 2 characters",
+                    },
+                  })}
                 />
               </div>
               {/* Last Name */}
@@ -189,7 +205,17 @@ const SignupPage = () => {
             focus:border-primary focus:ring-4 focus:ring-primary/20"
                   required
                   autoComplete="off"
-                  {...register("last_name")}
+                  {...register("last_name", {
+                    required: "Last Name is required",
+                    minLength: {
+                      value: 2,
+                      message: "Last Name must be at least 2 characters",
+                    },
+                    maxLength: {
+                      value: 15,
+                      message: "Last Name can be at most 15 characters",
+                    },
+                  })}
                 />
               </div>
             </div>
@@ -237,10 +263,42 @@ const SignupPage = () => {
                   className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300 focus:border-primary focus:ring-4 focus:ring-primary/20"
                   required
                   autoComplete="off"
-                  {...register("phone_number")}
+                  {...register("phone_number", {
+                    required: "Phone Number is required",
+                    minLength: {
+                      value: 10,
+                      message: "Valid Nepali Phone Number is of 10 digits",
+                    },
+                    maxLength: {
+                      value: 10,
+                      message: "Valid Nepali Phone Number is of 10 digits",
+                    },
+                    pattern: {
+                      value: /^(98|97|96)\d{8}$/,
+                      message: "Phone Number must start with 98 or 97 or 96",
+                    },
+                  })}
                 />
               </div>
             </div>
+            {Object.keys(errors).length > 0 && (
+              <div
+                className="error-summary-box"
+                style={{
+                  color: "red",
+                  border: "1px solid red",
+                  padding: "10px",
+                  marginBottom: "15px",
+                }}
+              >
+                <h4>Please fix the following errors:</h4>
+                <ul>
+                  {Object.values(errors).map((error, index) => (
+                    <li className="ml-8 list-disc" key={index}>{error.message}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Divider */}
             <div className="relative flex items-center">

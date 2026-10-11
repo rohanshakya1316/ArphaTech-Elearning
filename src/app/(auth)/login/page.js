@@ -21,7 +21,11 @@ import { toast } from "react-toastify";
 const LoginPage = () => {
   const { loginUser } = useAuthStore.getState();
   const [loading, setLoading] = useState(false);
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({mode: "onChange"});
   const router = useRouter();
 
   const submitForm = (data) => {
@@ -80,13 +84,27 @@ const LoginPage = () => {
 
             <input
               type="phone"
-              id="phone"
+              id="phone_number"
               placeholder="Enter your phone number"
               maxLength={10}
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300 focus:border-primary focus:ring-4 focus:ring-primary/20"
               required
               autoComplete="off"
-              {...register("phone_number")}
+              {...register("phone_number", {
+                required: "Phone Number is required",
+                minLength: {
+                  value: 10,
+                  message: "Valid Nepali Phone Number is of 10 digits",
+                },
+                maxLength: {
+                  value: 10,
+                  message: "Valid Nepali Phone Number is of 10 digits",
+                },
+                pattern: {
+                  value: /^(98|97|96)\d{8}$/,
+                  message: "Phone Number must start with 98 or 97 or 96",
+                },
+              })}
             />
           </div>
           {/* Password */}
@@ -98,8 +116,39 @@ const LoginPage = () => {
               Password
             </label>
 
-            <PasswordInput id="password" {...register("password")} />
+            <PasswordInput
+              id="password"
+              {...register("password", {
+                required: "Password is required",
+                pattern: {
+                  value:
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                  message:
+                    "Password must be at least 8 characters with one special symbol, uppercase, lowercase and number ",
+                },
+              })}
+            />
           </div>
+          {Object.keys(errors).length > 0 && (
+            <div
+              className="error-summary-box"
+              style={{
+                color: "red",
+                border: "1px solid red",
+                padding: "10px",
+                marginBottom: "15px",
+              }}
+            >
+              <h4>Please fix the following errors:</h4>
+              <ul>
+                {Object.values(errors).map((error, index) => (
+                  <li className="ml-8 list-disc" key={index}>
+                    {error.message}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Terms and Conditions */}
           <div className="flex items-center justify-between text-sm">

@@ -1,9 +1,11 @@
 export const metadata = {
-  title: "Sign Up",
+  title: {
+    template: "%s | Sign Up | E-Learning",
+    default: "Sign Up"},
   description: "Sign Up for the E-learning",
 };
-const SignInLayout = ({ children }) => {
+const SignUpLayout = ({ children }) => {
   return <>{children}</>;
 };
 
-export default SignInLayout;
+export default SignUpLayout;

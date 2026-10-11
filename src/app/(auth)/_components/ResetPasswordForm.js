@@ -79,13 +79,18 @@ const ResetPasswordForm = () => {
                 <PasswordInput
                   {...register("new_password", {
                     required: "Password is required",
+                    pattern: {
+                      value:
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message:
+                        "Password must be at least 8 characters with one special symbol, uppercase, lowercase and number ",
+                    },
                   })}
                 />
               </div>
             </div>
 
             {/* Confirm */}
-
             <div>
               <label
                 htmlFor="new_password_confirm"

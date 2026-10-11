@@ -110,7 +110,21 @@ const ForgotPasswordPage = () => {
                     maxLength={10}
                     className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 bg-white text-heading focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
                     required
-                    {...register("phone_number")}
+                    {...register("phone_number", {
+                      required: "Phone Number is required",
+                      minLength: {
+                        value: 10,
+                        message: "Valid Nepali Phone Number is of 10 digits",
+                      },
+                      maxLength: {
+                        value: 10,
+                        message: "Valid Nepali Phone Number is of 10 digits",
+                      },
+                      pattern: {
+                        value: /^(98|97|96)\d{8}$/,
+                        message: "Phone Number must start with 98 or 97 or 96",
+                      },
+                    })}
                   />
                 </div>
               </div>
