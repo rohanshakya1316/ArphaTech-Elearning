@@ -23,7 +23,7 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
     setValue,
     getValues,
     formState: { errors },
-  } = useForm();
+  } = useForm({ mode: "onChange" });
 
   const router = useRouter();
 
@@ -317,9 +317,9 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
                 })}
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-500">
+                <div className="mt-1 text-sm text-red-500 w-2xs">
                   {errors.password.message}
-                </p>
+                </div>
               )}
             </div>
 

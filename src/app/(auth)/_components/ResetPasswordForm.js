@@ -88,6 +88,11 @@ const ResetPasswordForm = () => {
                   })}
                 />
               </div>
+              {errors.new_password && (
+                <div className="mt-1 text-sm text-red-500 w-2xs">
+                  {errors.new_password.message}
+                </div>
+              )}
             </div>
 
             {/* Confirm */}

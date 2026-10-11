@@ -359,7 +359,7 @@ const RegisterTeacher = () => {
                 })}
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-500">
+                <p className="mt-1 text-sm text-red-500 w-2xs">
                   {errors.password.message}
                 </p>
               )}
