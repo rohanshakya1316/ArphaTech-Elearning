@@ -4,6 +4,7 @@ import { completeTeacherSignup } from "@/api/auth";
 import ComboBox from "@/components/ComboBox";
 import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
+import { emailRegex, passwordRegex } from "@/constants/regex";
 import { TEACHER_DASHBOARD_ROUTE } from "@/constants/routes";
 import { ArrowRight, CloudUpload } from "lucide-react";
 import Image from "next/image";
@@ -18,6 +19,7 @@ const RegisterTeacher = () => {
   const [faculties, setFaculties] = useState([]);
   const [institutes, setInstitutes] = useState([]);
   const [verificationDocument, setVerificationDocument] = useState([]);
+  const [documentUpload, setDocumentUpload] = useState(false);
   const [localVerificationDocument, setLocalVerificationDocument] = useState(
     [],
   );
@@ -55,10 +57,12 @@ const RegisterTeacher = () => {
     control,
     setValue,
     reset,
+    getValues,
     formState: { errors },
   } = useForm();
 
   const removeVerificationDocument = (indexToRemove) => {
+    setDocumentUpload(false);
     // Remove the actual file
     setVerificationDocument((prevFiles) =>
       prevFiles.filter((_, index) => index !== indexToRemove),
@@ -154,8 +158,17 @@ const RegisterTeacher = () => {
                 className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300 focus:border-primary focus:ring-4 focus:ring-primary/20"
                 required
                 autoComplete="off"
-                {...register("email")}
+                {...register("email", {
+                  required: "Email is requried",
+                  pattern: {
+                    value: emailRegex,
+                    message: "Please enter a valid email address",
+                  },
+                })}
               />
+              {errors.email && (
+                <p className="text-red-500">{errors.email?.message}</p>
+              )}
             </div>
 
             {/* School or College Name */}
@@ -249,26 +262,29 @@ const RegisterTeacher = () => {
 
               <label
                 htmlFor="verification_document"
-                className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/50 bg-gray-100 py-2 transition-all duration-300 hover:border-primary hover:bg-primary/5"
+                className="group relative flex h-36 w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-primary/50 bg-gray-100 transition-all duration-300 hover:border-primary hover:bg-primary/5"
               >
-                <CloudUpload className="h-10 w-10 text-accent transition group-hover:scale-110" />
+                {!documentUpload && (
+                  <>
+                    <CloudUpload className="h-10 w-10 text-accent transition group-hover:scale-110" />
 
-                <h3 className="mt-2 text-md font-semibold text-heading">
-                  Upload Document
-                </h3>
+                    <h3 className="mt-2 text-md font-semibold text-heading">
+                      Upload Document
+                    </h3>
 
-                <p className="mt-2 text-body">
-                  Click to browse or drag & drop (less than 5MB)
-                </p>
+                    <p className="mt-2 text-body">
+                      Click to browse or drag & drop (less than 5MB)
+                    </p>
 
-                <span className="text-sm text-muted mt-1">
-                  PNG • JPG • JPEG • WEBP • PDF
-                </span>
+                    <span className="mt-1 text-sm text-muted">
+                      PNG • JPG • JPEG • WEBP • PDF
+                    </span>
+                  </>
+                )}
 
                 <input
                   id="verification_document"
                   type="file"
-                  multiple
                   accept=".png,.jpg,.jpeg,.webp,.pdf"
                   className="hidden"
                   {...register("verification_document", {
@@ -276,10 +292,11 @@ const RegisterTeacher = () => {
                     onChange: (event) => {
                       const files = Array.from(event.target.files || []);
 
-                      // Store actual File objects
-                      setVerificationDocument(files);
+                      if (files.length === 0) return;
 
-                      // Create preview URLs
+                      setVerificationDocument(files);
+                      setDocumentUpload(true);
+
                       const urls = files.map((file) =>
                         URL.createObjectURL(file),
                       );
@@ -289,32 +306,28 @@ const RegisterTeacher = () => {
                   })}
                 />
 
-                {/* File previews */}
-                {localVerificationDocument.length > 0 && (
-                  <div className="flex flex-wrap gap-5 mt-6">
-                    {localVerificationDocument.map((url, index) => (
-                      <div
-                        key={url}
-                        className="relative overflow-hidden rounded-2xl border border-gray-200 shadow-md"
-                      >
-                        <Image
-                          src={url}
-                          alt={`Verification document ${index + 1}`}
-                          width={120}
-                          height={120}
-                          className="w-28 h-28 object-cover"
-                        />
+                {documentUpload && localVerificationDocument.length > 0 && (
+                  <>
+                    <Image
+                      src={localVerificationDocument[0]}
+                      alt="Verification document preview"
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
 
-                        <button
-                          type="button"
-                          onClick={() => removeVerificationDocument(index)}
-                          className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        removeVerificationDocument(0);
+                      }}
+                      className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
+                    >
+                      X
+                    </button>
+                  </>
                 )}
               </label>
 
@@ -334,7 +347,22 @@ const RegisterTeacher = () => {
                 Password
               </label>
 
-              <PasswordInput id="password" {...register("password")} />
+              <PasswordInput
+                id="password"
+                {...register("password", {
+                  required: "Password is requried",
+                  pattern: {
+                    value: passwordRegex,
+                    message:
+                      "Password must be at least 8 characters with one special symbol, uppercase, lowercase and number",
+                  },
+                })}
+              />
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* Confirm Password */}
@@ -349,8 +377,16 @@ const RegisterTeacher = () => {
               <PasswordInput
                 id="password_confirm"
                 placeholder="Enter your confirm password"
-                {...register("password_confirm")}
+                {...register("password_confirm", {
+                  validate: (value) =>
+                    value === getValues("password") || "Passwords do not match",
+                })}
               />
+              {errors.password_confirm && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.password_confirm.message}
+                </p>
+              )}
             </div>
           </div>
 

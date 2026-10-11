@@ -17,6 +17,7 @@ import { login } from "@/api/auth";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/stores/authStore";
 import { toast } from "react-toastify";
+import { passwordRegex, phoneRegex } from "@/constants/regex";
 
 const LoginPage = () => {
   const { loginUser } = useAuthStore.getState();
@@ -25,7 +26,7 @@ const LoginPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({mode: "onChange"});
+  } = useForm({ mode: "onChange" });
   const router = useRouter();
 
   const submitForm = (data) => {
@@ -101,7 +102,7 @@ const LoginPage = () => {
                   message: "Valid Nepali Phone Number is of 10 digits",
                 },
                 pattern: {
-                  value: /^(98|97|96)\d{8}$/,
+                  value: phoneRegex,
                   message: "Phone Number must start with 98 or 97 or 96",
                 },
               })}
@@ -121,10 +122,9 @@ const LoginPage = () => {
               {...register("password", {
                 required: "Password is required",
                 pattern: {
-                  value:
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                  value: passwordRegex,
                   message:
-                    "Password must be at least 8 characters with one special symbol, uppercase, lowercase and number ",
+                    "Password must be at least 8 characters with one special symbol, uppercase, lowercase and number",
                 },
               })}
             />

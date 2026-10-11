@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { confirmResetPassword } from "@/api/auth";
 import { getCookie } from "@/helpers/cookie";
 import { useRouter } from "next/navigation";
+import { passwordRegex } from "@/constants/regex";
 
 const ResetPasswordForm = () => {
   const {
@@ -80,8 +81,7 @@ const ResetPasswordForm = () => {
                   {...register("new_password", {
                     required: "Password is required",
                     pattern: {
-                      value:
-                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      value: passwordRegex,
                       message:
                         "Password must be at least 8 characters with one special symbol, uppercase, lowercase and number ",
                     },

@@ -5,6 +5,7 @@ import nepalFlag from "@/assets/images/nepal-flag.svg";
 import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
 import VerifyOTP from "@/components/VerifyOTP";
+import { phoneRegex } from "@/constants/regex";
 import { STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
 import {
   LOGIN_ROUTE,
@@ -274,7 +275,7 @@ const SignupPage = () => {
                       message: "Valid Nepali Phone Number is of 10 digits",
                     },
                     pattern: {
-                      value: /^(98|97|96)\d{8}$/,
+                      value: phoneRegex,
                       message: "Phone Number must start with 98 or 97 or 96",
                     },
                   })}
@@ -294,7 +295,9 @@ const SignupPage = () => {
                 <h4>Please fix the following errors:</h4>
                 <ul>
                   {Object.values(errors).map((error, index) => (
-                    <li className="ml-8 list-disc" key={index}>{error.message}</li>
+                    <li className="ml-8 list-disc" key={index}>
+                      {error.message}
+                    </li>
                   ))}
                 </ul>
               </div>

@@ -12,9 +12,15 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import ResetPasswordForm from "../_components/ResetPasswordForm";
+import { phoneRegex } from "@/constants/regex";
 
 const ForgotPasswordPage = () => {
-  const { register, handleSubmit, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({ mode: "onChange" });
   const [loading, setLoading] = useState(false);
   const [showVerifyOTP, setShowVerifyOTP] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -121,12 +127,17 @@ const ForgotPasswordPage = () => {
                         message: "Valid Nepali Phone Number is of 10 digits",
                       },
                       pattern: {
-                        value: /^(98|97|96)\d{8}$/,
+                        value: phoneRegex,
                         message: "Phone Number must start with 98 or 97 or 96",
                       },
                     })}
                   />
                 </div>
+                {errors.phone_number && (
+                  <div className="text-red-500 text-sm mt-2">
+                    {errors.phone_number.message}
+                  </div>
+                )}
               </div>
 
               <button

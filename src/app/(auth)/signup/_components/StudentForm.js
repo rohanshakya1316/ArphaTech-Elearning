@@ -5,6 +5,7 @@ import { completeStudentSignup } from "@/api/auth";
 import ComboBox from "@/components/ComboBox";
 import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
+import { emailRegex, passwordRegex } from "@/constants/regex";
 import { STUDENT_DASHBOARD_ROUTE } from "@/constants/routes";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,7 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
     reset,
     control,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm();
 
@@ -124,8 +126,19 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
                 className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300 focus:border-primary focus:ring-4 focus:ring-primary/20"
                 required
                 autoComplete="off"
-                {...register("email")}
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: emailRegex,
+                    message: "Please enter a valid email address",
+                  },
+                })}
               />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             {/* School or College Name */}
@@ -292,7 +305,22 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
                 Password
               </label>
 
-              <PasswordInput id="password" {...register("password")} />
+              <PasswordInput
+                id="password"
+                {...register("password", {
+                  required: "Password is required",
+                  pattern: {
+                    value: passwordRegex,
+                    message:
+                      "Password must be at least 8 characters with one special symbol, uppercase, lowercase and number",
+                  },
+                })}
+              />
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* Confirm Password */}
@@ -307,8 +335,16 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
               <PasswordInput
                 id="password_confirm"
                 placeholder="Enter your confirm password"
-                {...register("password_confirm")}
+                {...register("password_confirm", {
+                  validate: (value) =>
+                    value === getValues("password") || "Passwords do not match",
+                })}
               />
+              {errors.password_confirm && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.password_confirm.message}
+                </p>
+              )}
             </div>
           </div>
 
