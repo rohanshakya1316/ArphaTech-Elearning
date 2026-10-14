@@ -2,9 +2,9 @@
 import { sendOTP } from "@/api/auth";
 import logo from "@/assets/images/logo.jpeg";
 import nepalFlag from "@/assets/images/nepal-flag.svg";
-import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
 import VerifyOTP from "@/components/VerifyOTP";
+import { RESUME_SIGNUP, SIGNUP } from "@/constants/purposes";
 import { phoneRegex } from "@/constants/regex";
 import { STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
 import {
@@ -12,6 +12,7 @@ import {
   REGISTER_STUDENT_ROUTE,
   REGISTER_TEACHER_ROUTE,
 } from "@/constants/routes";
+import { setCookie } from "@/helpers/cookie";
 import { GraduationCap, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,6 +24,8 @@ import { toast } from "react-toastify";
 const SignupPage = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [purpose, setPurpose] = useState(SIGNUP);
 
   const router = useRouter();
 
@@ -31,8 +34,8 @@ const SignupPage = () => {
     handleSubmit,
     control,
     setValue,
-    formState: { errors, isSubmitting },
-  } = useForm({ mode: "onChange", defaultValues: { role: "" } });
+    formState: { errors },
+  } = useForm({ mode: "onBlur", defaultValues: { role: "" } });
 
   // Disable body scroll when OTP modal is open
   useEffect(() => {
@@ -52,40 +55,26 @@ const SignupPage = () => {
   const selectedRole = useWatch({ control, name: "role" });
 
   const submitForm = (data) => {
-    console.log(data);
     setLoading(true);
+    setPhoneNumber(data?.phone_number);
+
     sendOTP({
-      first_name: data.first_name,
-      middle_name: data.middle_name,
-      last_name: data.last_name,
       phone_number: data.phone_number,
       role: data.role,
     })
       .then((response) => {
-        localStorage.setItem("signUpToken", response.data.access);
-        localStorage.setItem("phoneNumber", response.data.phone_number);
-        setLoading(false);
         setOpen(true);
+        setPurpose(response.data?.action);
+        if (response.data?.action === SIGNUP) {
+          toast.success(response.data?.message);
+        }
       })
       .catch((error) => {
-        const data = error.response?.data;
-
-        if (data?.details) {
-          // Use Regex to find the text between string=' and the next '
-          const match = data.details.match(/string='([^']+)'/);
-
-          if (match && match[1]) {
-            // Displays: "Phone number already exists."
-            toast.error(match[1]);
-          } else {
-            // Fallback if Regex fails
-            toast.error(data.error || "Something went wrong.");
-          }
-        } else {
-          toast.error(data?.error || "An unexpected error occurred.");
-        }
-        setLoading(false);
-      });
+        const errorData = error.response?.data;
+        console.log(errorData);
+        toast.error("Something went wrong!");
+      })
+      .finally(() => setLoading(false));
   };
 
   const handleRoleSelect = (role) => {
@@ -95,14 +84,26 @@ const SignupPage = () => {
     });
   };
 
+  const verifyData = {
+    purpose: purpose,
+    phone_number: phoneNumber,
+  };
+
   const handleOnSuccessOTP = (data) => {
     console.log("From Sign Up:", data);
-    if (data?.user?.role === STUDENT_ROLE) {
-      router.replace(REGISTER_STUDENT_ROUTE);
-    } else if (data?.user?.role === TEACHER_ROLE) {
-      router.replace(REGISTER_TEACHER_ROUTE);
-    } else {
-      throw new Error(`Role mismatch or missing. Role is: ${data?.user?.role}`);
+    setCookie("signUpToken", data?.signup_token, 5);
+
+    if (data?.action === RESUME_SIGNUP || data?.action === SIGNUP) {
+      toast.success(data?.message);
+      if (data?.user?.role === STUDENT_ROLE) {
+        router.replace(REGISTER_STUDENT_ROUTE);
+      } else if (data?.user?.role === TEACHER_ROLE) {
+        router.replace(REGISTER_TEACHER_ROUTE);
+      } else {
+        throw new Error(
+          `Role mismatch or missing. Role is: ${data?.user?.role}`,
+        );
+      }
     }
   };
 
@@ -114,7 +115,7 @@ const SignupPage = () => {
           onClick={() => setOpen(false)}
         >
           <div onClick={(e) => e.stopPropagation()}>
-            <VerifyOTP onSuccess={handleOnSuccessOTP} />
+            <VerifyOTP verifyData={verifyData} onSuccess={handleOnSuccessOTP} />
           </div>
         </div>
       )}
@@ -138,101 +139,6 @@ const SignupPage = () => {
 
           {/* Form */}
           <form onSubmit={handleSubmit(submitForm)} className="mt-8 space-y-5">
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-x-4 lg:grid-cols-3 lg:gap-4">
-              {/* Firstname */}
-              <div>
-                <label
-                  htmlFor="firstname"
-                  className="block text-sm font-medium text-heading mb-2"
-                >
-                  First Name
-                </label>
-
-                <input
-                  type="text"
-                  id="firstname"
-                  placeholder="First Name"
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300
-            focus:border-primary focus:ring-4 focus:ring-primary/20"
-                  required
-                  autoComplete="off"
-                  {...register("first_name", {
-                    required: "First Name is required",
-                    minLength: {
-                      value: 2,
-                      message: "Name must be at least 2 characters",
-                    },
-                  })}
-                />
-              </div>
-              {/* Middle Name */}
-              <div>
-                <label
-                  htmlFor="middlename"
-                  className="block text-sm font-medium text-heading mb-2"
-                >
-                  Middle Name
-                </label>
-
-                <input
-                  type="text"
-                  id="middlename"
-                  placeholder="Middle Name"
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300
-            focus:border-primary focus:ring-4 focus:ring-primary/20"
-                  autoComplete="off"
-                  {...register("middle_name", {
-                    minLength: {
-                      value: 2,
-                      message: "Middle Name must be at least 2 characters",
-                    },
-                  })}
-                />
-              </div>
-              {/* Last Name */}
-              <div className="md:col-span-2 lg:col-span-1">
-                <label
-                  htmlFor="lastname"
-                  className="block text-sm font-medium text-heading mb-2"
-                >
-                  Last Name
-                </label>
-
-                <input
-                  type="text"
-                  id="lastname"
-                  placeholder="Last Name"
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300
-            focus:border-primary focus:ring-4 focus:ring-primary/20"
-                  required
-                  autoComplete="off"
-                  {...register("last_name", {
-                    required: "Last Name is required",
-                    minLength: {
-                      value: 2,
-                      message: "Last Name must be at least 2 characters",
-                    },
-                    maxLength: {
-                      value: 15,
-                      message: "Last Name can be at most 15 characters",
-                    },
-                  })}
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div className="hidden">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-heading mb-2"
-              >
-                Password
-              </label>
-
-              <PasswordInput id="password" {...register("password")} />
-            </div>
-
             {/* Phone with Country Code */}
             <div>
               <label
@@ -303,18 +209,13 @@ const SignupPage = () => {
               </div>
             )}
 
-            {/* Divider */}
-            <div className="relative flex items-center">
-              <div className="grow border-t border-slate-400"></div>
-            </div>
-
             {/* User Roles */}
             <div>
               <input type="hidden" {...register("role")} />
               <h3 className="text-xl font-semibold text-center mb-4">
                 Select your role as a user
               </h3>
-              <div className="grid grid-cols-2 items-stretch justify-center">
+              <div className="grid grid-cols-2 gap-4 items-stretch justify-center">
                 <div
                   onClick={() => handleRoleSelect(STUDENT_ROLE)}
                   className={`mx-auto w-36 md:w-44 overflow-hidden cursor-pointer rounded-2xl bg-white shadow-lg hover:shadow-2xl border ${selectedRole == STUDENT_ROLE ? `bg-blue-100!` : `border-transparent bg-white`}`}
@@ -365,7 +266,7 @@ const SignupPage = () => {
               className="relative w-full rounded-xl bg-primary py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:bg-primary-hover hover:shadow-xl hover:-translate-y-1 active:translate-y-0 disabled:opacity-80"
               disabled={loading}
             >
-              Send OTP{" "}
+              {loading ? "Sending OTP..." : "Send OTP"}
               {loading && (
                 <Spinner className="absolute top-2.5 right-5 w-7! h-7!" />
               )}
@@ -380,7 +281,7 @@ const SignupPage = () => {
               <div className="grow border-t border-slate-300"></div>
             </div>
 
-            {/* Signup */}
+            {/* Login */}
             <p className="text-center text-sm text-body">
               Already have an account? &nbsp;
               <Link

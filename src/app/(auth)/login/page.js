@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import useAuthStore from "@/stores/authStore";
 import { toast } from "react-toastify";
 import { passwordRegex, phoneRegex } from "@/constants/regex";
+import { STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
 
 const LoginPage = () => {
   const { loginUser } = useAuthStore.getState();
@@ -39,9 +40,9 @@ const LoginPage = () => {
         loginUser({ user: response.data });
         console.log(response);
         toast.success("Login Successful");
-        if (response.data.user.role === "student")
+        if (response.data.user.role === STUDENT_ROLE)
           router.replace(STUDENT_DASHBOARD_ROUTE);
-        else if (response.data.user.role === "instructor")
+        else if (response.data.user.role === TEACHER_ROLE)
           router.replace(TEACHER_DASHBOARD_ROUTE);
         else router.replace(HOME_ROUTE);
       })

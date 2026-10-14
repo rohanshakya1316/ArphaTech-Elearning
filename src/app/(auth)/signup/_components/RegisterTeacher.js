@@ -82,7 +82,7 @@ const RegisterTeacher = () => {
 
   const prepareData = (data) => {
     const formData = new FormData();
-
+    formData.append("full_name", data.full_name);
     formData.append("email", data.email);
     formData.append("faculty", data.facultyId);
     formData.append("schools", data.instituteId);
@@ -142,6 +142,33 @@ const RegisterTeacher = () => {
         {/* Form */}
         <form onSubmit={handleSubmit(submitForm)} className="mt-8 space-y-5">
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm: gap-x-4 md:grid-cols-4 md:gap-x-4 lg:grid-cols-6 lg:gap-4">
+            {/* Full Name  */}
+            <div className="col-span-full">
+              <label
+                htmlFor="full_name"
+                className="block text-sm font-medium text-heading mb-2"
+              >
+                Full Name
+              </label>
+
+              <input
+                type="text"
+                id="full_name"
+                placeholder="Full Name"
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300
+                        focus:border-primary focus:ring-4 focus:ring-primary/20"
+                required
+                autoComplete="off"
+                {...register("full_name", {
+                  required: "Full Name is required",
+                  minLength: {
+                    value: 2,
+                    message: "Name must be at least 2 characters",
+                  },
+                })}
+              />
+            </div>
+
             {/* Email */}
             <div className="col-span-full">
               <label
