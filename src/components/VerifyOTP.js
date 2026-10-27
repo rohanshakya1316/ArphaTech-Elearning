@@ -66,7 +66,7 @@ const VerifyOTP = ({ verifyData, onSuccess }) => {
   };
 
   const resendOTP = () => {
-    resendOTPCode(verifyData)
+    resendOTPCode(verifyData.phone_number)
       .then((response) => {
         console.log(response);
       })
