@@ -13,10 +13,11 @@ import {
   REGISTER_TEACHER_ROUTE,
 } from "@/constants/routes";
 import { setCookie } from "@/helpers/cookie";
+import { useAuthStore } from "@/stores/authStore";
 import { GraduationCap, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -37,6 +38,9 @@ const SignupPage = () => {
     formState: { errors },
   } = useForm({ mode: "onBlur", defaultValues: { role: "" } });
 
+  const setSignupData = useAuthStore((state) => state.setSignupData);
+  const verifyOTPState = useAuthStore((state) => state.verifyOTP);
+
   // Disable body scroll when OTP modal is open
   useEffect(() => {
     if (open) {
@@ -53,10 +57,14 @@ const SignupPage = () => {
 
   // watch the role field
   const selectedRole = useWatch({ control, name: "role" });
+  const pathname = usePathname();
 
   const submitForm = (data) => {
     setLoading(true);
     setPhoneNumber(data?.phone_number);
+
+    // const otpSlug = "verify-otp";
+    // window.history.pushState(null, "", `${pathname}/${otpSlug}`);
 
     sendOTP({
       phone_number: data.phone_number,
@@ -91,7 +99,9 @@ const SignupPage = () => {
 
   const handleOnSuccessOTP = (data) => {
     console.log("From Sign Up:", data);
+    setSignupData({ signupToken: data.signup_token, user: data.user });
     setCookie("signUpToken", data?.signup_token, 5);
+    verifyOTPState();
 
     if (data?.action === RESUME_SIGNUP || data?.action === SIGNUP) {
       toast.success(data?.message);

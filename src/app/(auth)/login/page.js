@@ -4,24 +4,18 @@ import logo from "@/assets/images/logo.jpeg";
 import Spinner from "@/components/Spinner";
 import PasswordInput from "@/components/PasswordInput";
 import { useForm } from "react-hook-form";
-import {
-  FORGOT_PASSWORD_ROUTE,
-  HOME_ROUTE,
-  STUDENT_DASHBOARD_ROUTE,
-  TEACHER_DASHBOARD_ROUTE,
-  REGISTER_ROUTE,
-} from "@/constants/routes";
+import { FORGOT_PASSWORD_ROUTE, REGISTER_ROUTE } from "@/constants/routes";
 import { useState } from "react";
 import Link from "next/link";
 import { login } from "@/api/auth";
 import { useRouter } from "next/navigation";
-import useAuthStore from "@/stores/authStore";
+import { useAuthStore } from "@/stores/authStore";
 import { toast } from "react-toastify";
 import { passwordRegex, phoneRegex } from "@/constants/regex";
 import { STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
 
 const LoginPage = () => {
-  const { loginUser } = useAuthStore.getState();
+  const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
   const [loading, setLoading] = useState(false);
   const {
     register,
@@ -37,14 +31,12 @@ const LoginPage = () => {
       password: data.password,
     })
       .then((response) => {
-        loginUser({ user: response.data });
-        console.log(response);
+        setAuthenticated({
+          accessToken: response.data.access,
+          refreshToken: response.data.refresh,
+          user: response.data.user,
+        });
         toast.success("Login Successful");
-        if (response.data.user.role === STUDENT_ROLE)
-          router.replace(STUDENT_DASHBOARD_ROUTE);
-        else if (response.data.user.role === TEACHER_ROLE)
-          router.replace(TEACHER_DASHBOARD_ROUTE);
-        else router.replace(HOME_ROUTE);
       })
       .catch((error) => {
         toast.error(`${error.response.data.detail}`);

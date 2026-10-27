@@ -7,6 +7,7 @@ import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
 import { emailRegex, passwordRegex } from "@/constants/regex";
 import { STUDENT_DASHBOARD_ROUTE } from "@/constants/routes";
+import { useAuthStore } from "@/stores/authStore";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
   } = useForm({ mode: "onChange" });
 
   const router = useRouter();
+  const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
 
   const selectedSchoolFromForm = useWatch({ control, name: "schoolId" });
   const isExistingSchool = !!selectedSchoolFromForm;
@@ -85,7 +87,11 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
       .then((response) => {
         toast.success("Student Sign Up Process Completed!");
         reset();
-        router.replace(STUDENT_DASHBOARD_ROUTE);
+        setAuthenticated({
+          accessToken: response.data.access,
+          refreshToken: response.data.refresh,
+          user: response.data.user,
+        });
       })
       .catch((error) => {
         toast.error(error.response.data);

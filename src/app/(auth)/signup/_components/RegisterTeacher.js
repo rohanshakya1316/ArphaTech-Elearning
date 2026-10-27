@@ -6,6 +6,7 @@ import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
 import { emailRegex, passwordRegex } from "@/constants/regex";
 import { TEACHER_DASHBOARD_ROUTE } from "@/constants/routes";
+import { useAuthStore } from "@/stores/authStore";
 import { ArrowRight, CloudUpload } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -25,6 +26,7 @@ const RegisterTeacher = () => {
   );
 
   const router = useRouter();
+  const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,7 +112,11 @@ const RegisterTeacher = () => {
         setLocalVerificationDocument([]);
         setVerificationDocument([]);
         reset();
-        router.replace(TEACHER_DASHBOARD_ROUTE);
+        setAuthenticated({
+          accessToken: response.data.access,
+          refreshToken: response.data.refresh,
+          user: response.data.user,
+        });
       })
       .catch((error) => {
         toast.error(error.response.data);
