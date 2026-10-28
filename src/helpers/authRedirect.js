@@ -19,7 +19,6 @@ export const getAuthRedirect = ({ authState, userRole, pathname }) => {
   const isOTPVerified = authState === AUTH_STATES.OTP_VERIFIED;
 
   const isAuthenticated = authState === AUTH_STATES.AUTHENTICATED;
-  console.log(isAuthenticated);
 
   const isPublicRoute = [HOME_ROUTE, LOGIN_ROUTE, REGISTER_ROUTE, FORGOT_PASSWORD_ROUTE].includes(
     pathname,
