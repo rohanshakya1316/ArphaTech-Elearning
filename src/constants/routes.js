@@ -7,5 +7,8 @@ export const REGISTER_TEACHER_ROUTE = `${REGISTER_ROUTE}/complete-teacher`;
 export const REGISTER_STUDENT_ROUTE = `${REGISTER_ROUTE}/complete-student`;
 
 export const HOME_ROUTE = "/";
+export const PROFILE_ROUTE = "/profile";
+
 export const STUDENT_DASHBOARD_ROUTE = "/dashboard/student";
 export const TEACHER_DASHBOARD_ROUTE = "/dashboard/teacher";
+export const ADMIN_DASHBOARD_ROUTE = "/dashboard/admin";
