@@ -21,7 +21,7 @@ const LoginPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ mode: "onChange" });
+  } = useForm({ mode: "onSubmit" });
   const router = useRouter();
 
   const submitForm = (data) => {
@@ -46,18 +46,10 @@ const LoginPage = () => {
       });
   };
   return (
-    <section className="mx-auto bg-gray-500 rounded-2xl my-4">
+    <section className="mx-auto bg-gray-500 rounded-2xl my-4 overflow-hidden">
       <div className="w-full max-w-md bg-white/90 p-8">
         {/* Header */}
         <div className="flex flex-col items-center justify-center text-center">
-          <Image
-            src={logo}
-            alt="Logo"
-            width="auto"
-            height="auto"
-            loading="eager"
-            className="h-20 w-24 mix-blend-multiply"
-          />
           <h2 className="text-3xl font-bold text-heading">Welcome Back</h2>
 
           <p className="mt-2 text-body">

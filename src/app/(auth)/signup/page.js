@@ -17,7 +17,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { GraduationCap, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -57,14 +57,10 @@ const SignupPage = () => {
 
   // watch the role field
   const selectedRole = useWatch({ control, name: "role" });
-  const pathname = usePathname();
 
   const submitForm = (data) => {
     setLoading(true);
     setPhoneNumber(data?.phone_number);
-
-    // const otpSlug = "verify-otp";
-    // window.history.pushState(null, "", `${pathname}/${otpSlug}`);
 
     sendOTP({
       phone_number: data.phone_number,
@@ -130,16 +126,10 @@ const SignupPage = () => {
         </div>
       )}
 
-      <section className="mx-auto bg-gray-500 rounded-2xl my-4">
+      <section className="mx-auto bg-gray-500 rounded-2xl my-4 overflow-hidden">
         <div className={`w-full max-w-md bg-white/90 p-8`}>
           {/* Header */}
           <div className="flex flex-col items-center justify-center text-center">
-            <Image
-              src={logo}
-              alt="Logo"
-              priority
-              className="h-20 w-24 mix-blend-multiply"
-            />
             <h2 className="text-3xl font-bold text-heading">Sign Up</h2>
 
             <p className="mt-2 text-body">

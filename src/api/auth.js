@@ -12,10 +12,7 @@ const verifyOTP = async (data) => {
 };
 
 const resendOTPCode = async (data) => {
-  const signUpToken = localStorage.getItem("signUpToken");
-  return await axios.post(`${config.apiUrl}/api/v1/auth/otp/send/`, data, {
-    headers: { Authorization: `Bearer ${signUpToken}` },
-  });
+  return await axios.post(`${config.apiUrl}/api/v1/auth/otp/send/`, data);
 };
 
 const login = async (data) => {
@@ -68,9 +65,14 @@ const confirmResetPassword = async (data) => {
   );
 };
 
-const logout = async (refreshToken) => {
-  return await axios.post(`${config.apiUrl}/api/v1/auth/logout/`, refreshToken);
+const logout = async (accessToken, refreshToken) => {
+  return await axios.post(
+    `${config.apiUrl}/api/v1/auth/logout/`,
+    {refresh: refreshToken},
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
 };
+
 export {
   sendOTP,
   verifyOTP,
