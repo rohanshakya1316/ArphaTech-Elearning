@@ -1,3 +1,4 @@
+import { logout } from "@/api/auth";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -26,7 +27,7 @@ const getAuthState = (state) => {
 
 export const useAuthStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       // Authentication data
       signupToken: null,
       otpVerified: false,
@@ -117,20 +118,26 @@ export const useAuthStore = create(
           };
         }),
 
-      // Logout
-      logout: () =>
-        set({
-          signupToken: null,
-          otpVerified: false,
+      logout: async () => {
+        const { accessToken, refreshToken } = get();
 
-          accessToken: null,
-          refreshToken: null,
-
-          user: null,
-          profileCompleted: false,
-
-          authState: AUTH_STATES.GUEST,
-        }),
+        try {
+          const response = await logout(accessToken, refreshToken);
+          return response.data.message;
+        } catch (error) {
+          console.error("Failed to notify server during logout:", error);
+        } finally {
+          set({
+            signupToken: null,
+            otpVerified: false,
+            accessToken: null,
+            refreshToken: null,
+            user: null,
+            profileCompleted: false,
+            authState: AUTH_STATES.GUEST,
+          });
+        }
+      },
     }),
 
     {
