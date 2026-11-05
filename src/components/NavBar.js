@@ -4,10 +4,13 @@ import logo from "@/assets/images/arphatech_logo.png";
 import { dashboardRoutes } from "@/constants/dashboardRoutes";
 import { navMenu as navigation } from "@/constants/navMenu";
 import {
+  FORGOT_PASSWORD_ROUTE,
   HOME_ROUTE,
   LOGIN_ROUTE,
   PROFILE_ROUTE,
   REGISTER_ROUTE,
+  REGISTER_STUDENT_ROUTE,
+  REGISTER_TEACHER_ROUTE,
 } from "@/constants/routes";
 import { useAuthStore } from "@/stores/authStore";
 import {
@@ -35,7 +38,13 @@ const NavBar = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
 
-  const hideNavBarRoutes = [LOGIN_ROUTE, REGISTER_ROUTE];
+  const hideNavBarRoutes = [
+    LOGIN_ROUTE,
+    REGISTER_ROUTE,
+    FORGOT_PASSWORD_ROUTE,
+    REGISTER_STUDENT_ROUTE,
+    REGISTER_TEACHER_ROUTE,
+  ];
 
   const handleLogout = async () => {
     const message = await logout();

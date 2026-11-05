@@ -119,10 +119,10 @@ export const useAuthStore = create(
         }),
 
       logout: async () => {
-        const { accessToken, refreshToken } = get();
+        const { refreshToken } = get();
 
         try {
-          const response = await logout(accessToken, refreshToken);
+          const response = await logout(refreshToken);
           return response.data.message;
         } catch (error) {
           console.error("Failed to notify server during logout:", error);
@@ -143,7 +143,7 @@ export const useAuthStore = create(
     {
       name: "auth-storage",
 
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => sessionStorage),
 
       // Persist only the required state
       partialize: (state) => ({

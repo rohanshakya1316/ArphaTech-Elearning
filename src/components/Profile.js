@@ -1,7 +1,9 @@
 import { dashboardRoutes } from "@/constants/dashboardRoutes";
 import { PROFILE_ROUTE } from "@/constants/routes";
+import { getImageUrl } from "@/helpers/getImage";
 import { useAuthStore } from "@/stores/authStore";
 import { ChevronDown, LayoutDashboard, LogOut, UserRound } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -10,6 +12,7 @@ const Profile = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const [profileOpen, setProfileOpen] = useState(false);
+  const profileImage = getImageUrl(user?.profile?.profile_image);
 
   const dropdownRef = useRef(null);
 
@@ -41,7 +44,18 @@ const Profile = () => {
           className="flex items-center gap-2 rounded-xl p-1.5 pr-3"
         >
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <UserRound size={20} />
+            <Image
+              src={profileImage}
+              alt={user?.full_name}
+              width={100}
+              height={100}
+              priority
+              className="
+                rounded-full
+                object-cover
+                shadow-md
+              "
+            />{" "}
           </span>
 
           <span className="max-w-27.5 truncate text-sm font-semibold text-slate-700">

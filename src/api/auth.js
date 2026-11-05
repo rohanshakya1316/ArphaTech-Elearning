@@ -19,25 +19,29 @@ const login = async (data) => {
   return await axios.post(`${config.apiUrl}/api/v1/auth/login/`, data);
 };
 
+const getAuthUserDetails = async () => {
+  return await api.get(`${config.apiUrl}/api/v1/auth/me`);
+};
+
 const completeTeacherSignup = async (data) => {
-  const signUpToken = getCookie("signUpToken");
-  return await api.post(
+  const token = getCookie("signUpToken");
+  return await axios.post(
     `${config.apiUrl}/api/v1/auth/profile/teacher/complete/`,
     data,
     {
       headers: {
-        Authorization: `Bearer ${signUpToken}`,
+        Authorization: `Bearer ${token}`,
       },
     },
   );
 };
 
 const completeStudentSignup = async (data) => {
-  const signUpToken = getCookie("signUpToken");
+  const token = getCookie("signUpToken");
   return await axios.post(
     `${config.apiUrl}/api/v1/auth/profile/student/complete/`,
     data,
-    { headers: { Authorization: `Bearer ${signUpToken}` } },
+    { headers: { Authorization: `Bearer ${token}` } },
   );
 };
 
@@ -65,12 +69,24 @@ const confirmResetPassword = async (data) => {
   );
 };
 
-const logout = async (accessToken, refreshToken) => {
-  return await axios.post(
-    `${config.apiUrl}/api/v1/auth/logout/`,
-    {refresh: refreshToken},
-    { headers: { Authorization: `Bearer ${accessToken}` } },
+const updateTeacherProfile = async (data) => {
+  return await api.patch(
+    `${config.apiUrl}/api/v1/auth/profile/teacher/update/`,
+    data,
   );
+};
+
+const updateStudentProfile = async (data) => {
+  return await api.patch(
+    `${config.apiUrl}/api/v1/auth/profile/student/update/`,
+    data,
+  );
+};
+
+const logout = async (refreshToken) => {
+  return await api.post(`${config.apiUrl}/api/v1/auth/logout/`, {
+    refresh: refreshToken,
+  });
 };
 
 export {
@@ -78,10 +94,13 @@ export {
   verifyOTP,
   resendOTPCode,
   login,
+  getAuthUserDetails,
   completeTeacherSignup,
   completeStudentSignup,
   forgotPassword,
   resetPassword,
   confirmResetPassword,
+  updateStudentProfile,
+  updateTeacherProfile,
   logout,
 };
