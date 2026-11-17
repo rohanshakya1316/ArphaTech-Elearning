@@ -1,6 +1,5 @@
 "use client";
 import { sendOTP } from "@/api/auth";
-import logo from "@/assets/images/logo.jpeg";
 import nepalFlag from "@/assets/images/nepal-flag.svg";
 import Spinner from "@/components/Spinner";
 import VerifyOTP from "@/components/VerifyOTP";
@@ -74,10 +73,20 @@ const SignupPage = () => {
         }
       })
       .catch((error) => {
-        const errorData = error.response?.data;
-        console.log(errorData);
-        toast.error("Something went wrong!");
+        const errorData = error.response?.data?.phone_number;
+
+        if (Array.isArray(errorData)) {
+          // Phone number validation error
+          toast.error(errorData[0]);
+        } else if (typeof errorData === "string") {
+          // Custom OTP error
+          toast.error(errorData);
+        } else {
+          // Fallback error
+          toast.error("Something went wrong. Please try again.");
+        }
       })
+
       .finally(() => setLoading(false));
   };
 
@@ -250,14 +259,6 @@ const SignupPage = () => {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Terms and Conditions */}
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-body">
-                <input type="checkbox" className="accent-primary" required />I
-                accept Terms & Conditions
-              </label>
             </div>
 
             {/* Send OTP Button */}
