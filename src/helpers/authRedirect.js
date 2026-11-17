@@ -10,8 +10,11 @@ import {
   TEACHER_DASHBOARD_ROUTE,
 } from "@/constants/routes";
 import { AUTH_STATES } from "@/stores/authStore";
+import { checkSignupSessionValidity } from "./checkSignupSessionValidity";
 
 export const getAuthRedirect = ({ authState, userRole, pathname }) => {
+  const isSignupSessionValid = checkSignupSessionValidity();
+
   const isGuest = authState === AUTH_STATES.GUEST;
 
   const isSignupPending = authState === AUTH_STATES.SIGNUP_PENDING;
@@ -20,9 +23,12 @@ export const getAuthRedirect = ({ authState, userRole, pathname }) => {
 
   const isAuthenticated = authState === AUTH_STATES.AUTHENTICATED;
 
-  const isPublicRoute = [HOME_ROUTE, LOGIN_ROUTE, REGISTER_ROUTE, FORGOT_PASSWORD_ROUTE].includes(
-    pathname,
-  );
+  const isPublicRoute = [
+    HOME_ROUTE,
+    LOGIN_ROUTE,
+    REGISTER_ROUTE,
+    FORGOT_PASSWORD_ROUTE,
+  ].includes(pathname);
 
   const isOTPRoute = pathname === "/verify-otp";
 
@@ -44,24 +50,17 @@ export const getAuthRedirect = ({ authState, userRole, pathname }) => {
 
   // Guest users
   if (isGuest) {
-    if (isPublicRoute) {
-      return null;
-    }
-
-    return REGISTER_ROUTE;
+    return isPublicRoute ? null : LOGIN_ROUTE;
   }
 
   // Signup is in progress
   if (isSignupPending) {
-    if (isOTPRoute) {
-      return null;
-    }
+    return isOTPRoute ? null : "/verify-otp";
+  }
 
-    if (isPublicRoute) {
-      return "/verify-otp";
-    }
-
-    return "/verify-otp";
+  // OTP verified, but signup session has expired
+  if (isOTPVerified && !isSignupSessionValid) {
+    return pathname === REGISTER_ROUTE ? null : REGISTER_ROUTE;
   }
 
   // OTP verified, profile incomplete

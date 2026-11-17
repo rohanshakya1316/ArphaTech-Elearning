@@ -1,4 +1,4 @@
-import { logout } from "@/api/auth";
+import { logout as logoutAPI } from "@/api/auth";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -97,17 +97,15 @@ export const useAuthStore = create(
         }),
 
       // Complete registration
-      setAuthenticated: ({ accessToken, refreshToken, user }) =>
+      setAuthenticated: (data) => {
         set((state) => {
           const newState = {
             ...state,
-
-            accessToken,
-            refreshToken,
-            user,
-
+            accessToken: data.access || data.accessToken || state.accessToken,
+            refreshToken:
+              data.refresh || data.refreshToken || state.refreshToken,
+            user: data.user || data,
             profileCompleted: true,
-
             signupToken: null,
             otpVerified: false,
           };
@@ -116,26 +114,60 @@ export const useAuthStore = create(
             ...newState,
             authState: getAuthState(newState),
           };
+        });
+
+        // Notify other tabs about successful login
+        if (typeof BroadcastChannel !== "undefined") {
+          try {
+            const channel = new BroadcastChannel("auth");
+            channel.postMessage({
+              type: "LOGIN",
+            });
+            channel.close();
+          } catch (error) {
+            console.error("Failed to broadcast login:", error);
+          }
+        }
+      },
+
+      // Clear local authentication state only
+      clearAuth: () =>
+        set({
+          signupToken: null,
+          otpVerified: false,
+          accessToken: null,
+          refreshToken: null,
+          user: null,
+          profileCompleted: false,
+          authState: AUTH_STATES.GUEST,
         }),
 
       logout: async () => {
         const { refreshToken } = get();
 
         try {
-          const response = await logout(refreshToken);
+          const response = await logoutAPI(refreshToken);
           return response.data.message;
         } catch (error) {
           console.error("Failed to notify server during logout:", error);
         } finally {
-          set({
-            signupToken: null,
-            otpVerified: false,
-            accessToken: null,
-            refreshToken: null,
-            user: null,
-            profileCompleted: false,
-            authState: AUTH_STATES.GUEST,
-          });
+          // Clear current tab
+          get().clearAuth();
+
+          // Notify other tabs
+          if (typeof BroadcastChannel !== "undefined") {
+            try {
+              const channel = new BroadcastChannel("auth");
+
+              channel.postMessage({
+                type: "LOGOUT",
+              });
+
+              channel.close();
+            } catch (error) {
+              console.error("Failed to broadcast logout:", error);
+            }
+          }
         }
       },
     }),
@@ -143,11 +175,11 @@ export const useAuthStore = create(
     {
       name: "auth-storage",
 
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => localStorage),
 
       // Persist only the required state
       partialize: (state) => ({
-        signupToken: state.signupToken,
+        // signupToken: state.signupToken,
         otpVerified: state.otpVerified,
 
         accessToken: state.accessToken,
