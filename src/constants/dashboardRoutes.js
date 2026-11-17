@@ -6,6 +6,6 @@ import {
 
 export const dashboardRoutes = {
   student: STUDENT_DASHBOARD_ROUTE,
-  teacher: TEACHER_DASHBOARD_ROUTE,
+  instructor: TEACHER_DASHBOARD_ROUTE,
   admin: ADMIN_DASHBOARD_ROUTE,
 };
