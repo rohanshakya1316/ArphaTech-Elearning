@@ -6,7 +6,8 @@ import ComboBox from "@/components/ComboBox";
 import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
 import { emailRegex, passwordRegex } from "@/constants/regex";
-import { STUDENT_DASHBOARD_ROUTE } from "@/constants/routes";
+import { REGISTER_ROUTE, STUDENT_DASHBOARD_ROUTE } from "@/constants/routes";
+import { checkSignupSessionValidity } from "@/helpers/checkSignupSessionValidity";
 import { useAuthStore } from "@/stores/authStore";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -72,6 +73,11 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
 
   const submitForm = (data) => {
     setLoading(true);
+    if (!checkSignupSessionValidity()) {
+      router.replace(REGISTER_ROUTE);
+      toast.info("Signup Session Expired. Please try again!");
+      return;
+    }
     const selectedInstitute = institutes.find(
       (institute) => institute.id === data.schoolId,
     );

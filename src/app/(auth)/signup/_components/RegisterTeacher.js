@@ -5,6 +5,7 @@ import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
 import { emailRegex, passwordRegex } from "@/constants/regex";
 import { TEACHER_DASHBOARD_ROUTE } from "@/constants/routes";
+import { checkSignupSessionValidity } from "@/helpers/checkSignupSessionValidity";
 import { useInitialData } from "@/hooks/useInitialData";
 import { useAuthStore } from "@/stores/authStore";
 import { ArrowRight, CloudUpload } from "lucide-react";
@@ -79,6 +80,11 @@ const RegisterTeacher = () => {
 
   const submitForm = (data) => {
     setSubmitting(true);
+    if (!checkSignupSessionValidity()) {
+      router.replace(REGISTER_ROUTE);
+      toast.info("Signup Session Expired. Please try again!");
+      return;
+    }
     const input = prepareData(data);
 
     completeTeacherSignup(input)
