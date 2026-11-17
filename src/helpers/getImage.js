@@ -1,7 +1,7 @@
 import config from "@/config/config";
 
 export const getImageUrl = (imagePath) => {
-  if (!imagePath) return "/images/default-avatar.png";
+  if (!imagePath) return;
 
   if (imagePath.startsWith("http")) {
     return imagePath;
