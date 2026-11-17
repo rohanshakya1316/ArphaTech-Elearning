@@ -67,11 +67,9 @@ const ProfilePage = () => {
     error: dataError,
   } = useInitialData();
 
-  // User role
   const isTeacher = user?.role === TEACHER_ROLE;
   const isStudent = user?.role === STUDENT_ROLE;
 
-  // React Hook Form
   const {
     register,
     handleSubmit,
@@ -178,13 +176,7 @@ const ProfilePage = () => {
   // Loading state
   if (dataLoading) {
     return (
-      <div
-        className="
-          flex min-h-[60vh]
-          items-center justify-center
-          px-4
-        "
-      >
+      <div className="flex min-h-[60vh] items-center justify-center px-4">
         <Spinner className="h-10 w-10 text-primary" />
       </div>
     );
@@ -304,7 +296,8 @@ const ProfilePage = () => {
                 type="text"
                 autoComplete="name"
                 placeholder="Enter your full name"
-                className={inputStyles}
+                className={`${inputStyles} text-muted`}
+                disabled
                 {...register("full_name", {
                   required: "Full name is required",
                   validate: (value) =>
