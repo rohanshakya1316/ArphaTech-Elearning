@@ -6,6 +6,7 @@ import { ChevronDown, LayoutDashboard, LogOut, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import placeholder from "@/assets/images/placeholder.png";
 import { toast } from "react-toastify";
 
 const Profile = () => {
@@ -45,12 +46,13 @@ const Profile = () => {
         >
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
             <Image
-              src={profileImage}
+              src={profileImage || placeholder}
               alt={user?.full_name}
               width={100}
               height={100}
               priority
               className="
+                h-9 w-9
                 rounded-full
                 object-cover
                 shadow-md

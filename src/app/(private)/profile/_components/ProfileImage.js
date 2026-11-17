@@ -243,19 +243,21 @@ const ProfileImage = ({ onImageSelect }) => {
               {user?.full_name || "Your Name"}
             </h2>
 
-            <p className="mt-1 flex items-center gap-1.5 bg-primary/10 w-fit px-2 rounded-lg text-xs leading-relaxed sm:text-sm">
-              {user?.role === TEACHER_ROLE && user?.is_verified_teacher ? (
-                <>
-                  <ShieldCheck className="h-4 w-4 text-green-600" />
-                  <span className="font-medium text-green-600">Verified</span>
-                </>
-              ) : (
-                <>
-                  <ShieldX className="h-4 w-4 text-red-500" />
-                  <span className="font-medium text-red-500">Unverified</span>
-                </>
-              )}
-            </p>
+            {user?.role === TEACHER_ROLE && (
+              <p className="mt-1 flex items-center gap-1.5 bg-primary/10 w-fit px-2 rounded-lg text-xs leading-relaxed sm:text-sm">
+                {user?.is_verified_teacher ? (
+                  <>
+                    <ShieldCheck className="h-4 w-4 text-green-600" />
+                    <span className="font-medium text-green-600">Verified</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldX className="h-4 w-4 text-red-500" />
+                    <span className="font-medium text-red-500">Unverified</span>
+                  </>
+                )}
+              </p>
+            )}
           </div>
 
           {/* Contact Information */}
