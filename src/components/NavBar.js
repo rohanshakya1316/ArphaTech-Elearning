@@ -93,104 +93,107 @@ const NavBar = () => {
 
   return (
     <>
-      <header className="sticky top-4 z-50 left-0 right-0 mx-auto w-[95%] rounded-3xl border-slate-200/80 bg-white drop-shadow-lg backdrop-blur-xl">
-        {/* Top navigation */}
-        <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex h-12 items-center justify-between gap-4">
-            {/* Logo */}
-            <Link
-              href={HOME_ROUTE}
-              className="group flex shrink-0 items-center gap-2.5"
-              aria-label="EduLearn home"
-            >
-              <Image
-                src={logo}
-                alt="Logo"
-                width="auto"
-                height="auto"
-                loading="eager"
-                className="h-10 w-10"
-              />
-              <span className="text-xl font-extrabold tracking-tight text-primary sm:text-2xl">
-                EduLearn
-              </span>
-            </Link>
-
-            {/* Desktop navigation links */}
-            <div className="hidden border-slate-100 lg:block">
-              <nav
-                aria-label="Main navigation"
-                className="mx-auto flex max-w-360 items-center gap-1 px-4 py-2 sm:px-6 lg:px-8"
+      {/* Full-width sticky wrapper applying the blur and top spacing */}
+      <div className="sticky top-0 left-0 right-0 z-50 w-full bg-white/40 pt-4 backdrop-blur-sm">
+        {/* Inner pill-shaped navigation */}
+        <header className="mx-auto w-[95%] rounded-3xl border border-slate-200/80 bg-white drop-shadow-lg">
+          <div className="w-full px-4 sm:px-6 lg:px-8">
+            <div className="flex h-12 items-center justify-between gap-4">
+              {/* Logo */}
+              <Link
+                href={HOME_ROUTE}
+                className="group flex shrink-0 items-center gap-2.5"
+                aria-label="EduLearn home"
               >
-                {navigation.map((item) => {
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      aria-current={isActive(item.href) ? "page" : undefined}
-                      className={linkClass(item.href)}
-                    >
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </nav>
-            </div>
-
-            <div className="flex items-center justify-center gap-2 md:pl-48 md:mr-4 lg:mr-0 lg:pl-0">
-              {/* Desktop search */}
-              <div className="hidden max-w-xl items-center rounded-2xl border border-slate-200 focus-within:border-slate-500 bg-slate-50 px-3 transition-all md:flex">
-                <Search size={19} className="shrink-0 text-slate-400" />
-                <input
-                  type="search"
-                  name="search"
-                  value={searchValue}
-                  onChange={(event) => setSearchValue(event.target.value)}
-                  placeholder="Search..."
-                  aria-label="Search"
-                  className="h-8 w-full bg-transparent px-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400"
+                <Image
+                  src={logo}
+                  alt="Logo"
+                  width="auto"
+                  height="auto"
+                  loading="eager"
+                  className="h-10 w-10"
                 />
+                <span className="text-xl font-extrabold tracking-tight text-primary sm:text-2xl">
+                  EduLearn
+                </span>
+              </Link>
+
+              {/* Desktop navigation links */}
+              <div className="hidden border-slate-100 lg:block">
+                <nav
+                  aria-label="Main navigation"
+                  className="mx-auto flex max-w-360 items-center gap-1 px-4 py-2 sm:px-6 lg:px-8"
+                >
+                  {navigation.map((item) => {
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        aria-current={isActive(item.href) ? "page" : undefined}
+                        className={linkClass(item.href)}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </nav>
               </div>
 
-              {/* Desktop authentication */}
-              <div className="hidden shrink-0 items-center gap-3 md:flex">
-                {user ? (
-                  <Profile />
-                ) : (
-                  <>
-                    <Link
-                      href={LOGIN_ROUTE}
-                      className="rounded-2xl px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200 hover:text-primary"
-                    >
-                      Log In
-                    </Link>
+              <div className="mr-4 flex items-center justify-center gap-2 md:pl-48 lg:mr-0 lg:pl-0">
+                {/* Desktop search */}
+                <div className="hidden max-w-xl items-center rounded-2xl border border-slate-200 bg-slate-50 px-3 transition-all focus-within:border-slate-500 md:flex">
+                  <Search size={19} className="shrink-0 text-slate-400" />
+                  <input
+                    type="search"
+                    name="search"
+                    value={searchValue}
+                    onChange={(event) => setSearchValue(event.target.value)}
+                    placeholder="Search..."
+                    aria-label="Search"
+                    className="h-8 w-full bg-transparent px-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400"
+                  />
+                </div>
 
-                    <Link
-                      href={REGISTER_ROUTE}
-                      className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-2 text-sm font-semibold text-white shadow-md shadow-primary/15 transition-all hover:bg-primary/80 hover:shadow-lg"
-                    >
-                      Get Started
-                      <ArrowRight size={16} />
-                    </Link>
-                  </>
-                )}
+                {/* Desktop authentication */}
+                <div className="hidden shrink-0 items-center gap-3 md:flex">
+                  {user ? (
+                    <Profile />
+                  ) : (
+                    <>
+                      <Link
+                        href={LOGIN_ROUTE}
+                        className="rounded-2xl px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200 hover:text-primary"
+                      >
+                        Log In
+                      </Link>
+
+                      <Link
+                        href={REGISTER_ROUTE}
+                        className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-2 text-sm font-semibold text-white shadow-md shadow-primary/15 transition-all hover:bg-primary/80 hover:shadow-lg"
+                      >
+                        Get Started
+                        <ArrowRight size={16} />
+                      </Link>
+                    </>
+                  )}
+                </div>
               </div>
+
+              {/* Mobile menu toggle */}
+              <button
+                type="button"
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-700 transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary lg:hidden"
+                aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+                aria-expanded={mobileOpen}
+                aria-controls="mobile-navigation"
+              >
+                {mobileOpen ? <X size={23} /> : <Menu size={23} />}
+              </button>
             </div>
-
-            {/* Mobile menu toggle */}
-            <button
-              type="button"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-700 transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary lg:hidden"
-              aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
-              aria-expanded={mobileOpen}
-              aria-controls="mobile-navigation"
-            >
-              {mobileOpen ? <X size={23} /> : <Menu size={23} />}
-            </button>
           </div>
-        </div>
-      </header>
+        </header>
+      </div>
 
       {/* Mobile backdrop and dropdown */}
       {mobileOpen && (
@@ -206,7 +209,7 @@ const NavBar = () => {
           {/* Mobile Dropdown */}
           <div
             id="mobile-navigation"
-            className="absolute left-0 right-0 top-20 z-50 mx-auto mt-3 flex w-[95%] flex-col gap-4 rounded-3xl border border-slate-100 bg-white p-5 shadow-2xl lg:hidden"
+            className="absolute left-0 right-0 top-24 z-50 mx-auto mt-3 flex w-[95%] flex-col gap-4 rounded-3xl border border-slate-100 bg-white p-5 shadow-2xl lg:hidden"
           >
             {/* Mobile Search */}
             <div className="relative md:hidden">
@@ -318,7 +321,6 @@ const NavBar = () => {
                     <LogOut size={17} />
                     Log Out
                   </button>
-                  )
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3 md:hidden">
