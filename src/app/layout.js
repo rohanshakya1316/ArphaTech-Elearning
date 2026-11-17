@@ -2,6 +2,8 @@ import { ToastContainer } from "react-toastify";
 import "./globals.css";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
+import AuthProvider from "@/components/providers/AuthProvider";
 export const metadata = {
   title: {
     default: "E-Learning",
@@ -15,7 +17,10 @@ export default function RootLayout({ children }) {
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-[#f2f2f7]">
         <NavBar />
-        <ProtectedRoute>{children}</ProtectedRoute>
+        <AuthProvider>
+          <ProtectedRoute>{children}</ProtectedRoute>
+        </AuthProvider>
+        <Footer />
         <ToastContainer position="top-right" autoClose={1500} />
       </body>
     </html>
