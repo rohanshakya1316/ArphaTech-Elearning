@@ -56,10 +56,14 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
   }, [selectedSchoolFromForm, setValue, institutes]);
 
   const prepareData = (data) => {
+    console.log("Form Ko data:", data);
     const formData = new FormData();
     formData.append("full_name", data.full_name);
-    formData.append("school", data.schoolId);
-    formData.append("school_name", data.school_name);
+    // Only send school when an existing institute is selected
+    if (data.schoolId) {
+      formData.append("school", data.schoolId);
+    }
+    formData.append("school_name", data?.school_name || null);
     formData.append("school_type", data.school_type.toLowerCase());
     formData.append("class_level", data.class_level);
     formData.append("faculty", data.faculty);
@@ -84,7 +88,7 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
 
     const payload = {
       ...data,
-      school_name: selectedInstitute?.name || "",
+      school_name: selectedInstitute?.name || data?.school_name || "",
     };
 
     const input = prepareData(payload);
