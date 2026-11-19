@@ -1,11 +1,16 @@
 "use client";
 
 import {
+  ADMIN_DASHBOARD_ROUTE,
+  DASHBOARD_ROUTE,
   FORGOT_PASSWORD_ROUTE,
   LOGIN_ROUTE,
   REGISTER_ROUTE,
   REGISTER_STUDENT_ROUTE,
   REGISTER_TEACHER_ROUTE,
+  STUDENT_DASHBOARD_ROUTE,
+  TEACHER_DASHBOARD_ROUTE,
+  TEACHER_NOTE_UPLOAD_ROUTE,
 } from "@/constants/routes";
 import {
   ArrowRight,
@@ -98,22 +103,26 @@ const FooterColumn = ({ title, links }) => {
 };
 
 const Footer = () => {
+  const pathname = usePathname();
+
   const hideFooterRoutes = [
     LOGIN_ROUTE,
     REGISTER_ROUTE,
     FORGOT_PASSWORD_ROUTE,
     REGISTER_STUDENT_ROUTE,
     REGISTER_TEACHER_ROUTE,
+    DASHBOARD_ROUTE,
+    STUDENT_DASHBOARD_ROUTE,
+    TEACHER_DASHBOARD_ROUTE,
+    ADMIN_DASHBOARD_ROUTE,
+    TEACHER_NOTE_UPLOAD_ROUTE,
   ];
-  const pathname = usePathname();
 
   if (hideFooterRoutes.includes(pathname)) return null;
 
   return (
     <footer className="bg-dark-bg text-white">
-      {/* =====================================
-          MAIN FOOTER
-      ===================================== */}
+      {/* MAIN FOOTER */}
 
       <div className="mx-auto w-full max-w-310 px-5 pb-12 pt-16 sm:px-8 sm:pt-20 lg:px-10 xl:px-12">
         <div className="grid grid-cols-1 gap-12 border-b border-white/10 pb-14 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10">

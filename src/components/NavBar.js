@@ -4,6 +4,8 @@ import logo from "@/assets/images/arphatech_logo.png";
 import { dashboardRoutes } from "@/constants/dashboardRoutes";
 import { navMenu as navigation } from "@/constants/navMenu";
 import {
+  ADMIN_DASHBOARD_ROUTE,
+  DASHBOARD_ROUTE,
   FORGOT_PASSWORD_ROUTE,
   HOME_ROUTE,
   LOGIN_ROUTE,
@@ -11,6 +13,8 @@ import {
   REGISTER_ROUTE,
   REGISTER_STUDENT_ROUTE,
   REGISTER_TEACHER_ROUTE,
+  STUDENT_DASHBOARD_ROUTE,
+  TEACHER_DASHBOARD_ROUTE,
 } from "@/constants/routes";
 import { useAuthStore } from "@/stores/authStore";
 import {
@@ -44,6 +48,10 @@ const NavBar = () => {
     FORGOT_PASSWORD_ROUTE,
     REGISTER_STUDENT_ROUTE,
     REGISTER_TEACHER_ROUTE,
+    DASHBOARD_ROUTE,
+    STUDENT_DASHBOARD_ROUTE,
+    TEACHER_DASHBOARD_ROUTE,
+    ADMIN_DASHBOARD_ROUTE,
   ];
 
   const handleLogout = async () => {
