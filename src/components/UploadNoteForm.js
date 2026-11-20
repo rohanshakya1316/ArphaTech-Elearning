@@ -211,13 +211,14 @@ const UploadNoteForm = ({ onSubmit, onCancel, subjects, classLevels }) => {
                       value.trim().length > 0 ||
                       "Description cannot contain only spaces.",
 
-                    minLength: (value) =>
-                      value.trim().length >= 10 ||
-                      "Description must contain at least 10 characters.",
+                    maxWords: (value) => {
+                      const wordCount = value.trim().split(/\s+/).length;
 
-                    maxLength: (value) =>
-                      value.trim().length <= 100 ||
-                      "Description cannot exceed 100 characters.",
+                      return (
+                        wordCount <= 100 ||
+                        "Description cannot exceed 100 words."
+                      );
+                    },
                   },
                 })}
               />
@@ -227,10 +228,17 @@ const UploadNoteForm = ({ onSubmit, onCancel, subjects, classLevels }) => {
 
                 <span
                   className={`ml-auto text-xs ${
-                    description.length > 100 ? "text-error" : "text-muted"
+                    description.trim()
+                      ? description.trim().split(/\s+/).length > 100
+                        ? "text-error"
+                        : "text-muted"
+                      : "text-muted"
                   }`}
                 >
-                  {description.length}/100
+                  {description.trim()
+                    ? description.trim().split(/\s+/).length
+                    : 0}
+                  /100 words
                 </span>
               </div>
             </div>
