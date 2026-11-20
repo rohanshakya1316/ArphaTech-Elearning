@@ -48,10 +48,6 @@ const NavBar = () => {
     FORGOT_PASSWORD_ROUTE,
     REGISTER_STUDENT_ROUTE,
     REGISTER_TEACHER_ROUTE,
-    DASHBOARD_ROUTE,
-    STUDENT_DASHBOARD_ROUTE,
-    TEACHER_DASHBOARD_ROUTE,
-    ADMIN_DASHBOARD_ROUTE,
   ];
 
   const handleLogout = async () => {
@@ -98,6 +94,8 @@ const NavBar = () => {
   };
 
   if (hideNavBarRoutes.includes(pathname)) return null;
+  
+  if (pathname.includes(DASHBOARD_ROUTE)) return;
 
   return (
     <>
