@@ -1,3 +1,5 @@
+// * Dashboard routes as per user roles
+
 import {
   ADMIN_DASHBOARD_ROUTE,
   STUDENT_DASHBOARD_ROUTE,

@@ -1,3 +1,5 @@
+// * Navigation Items for Nav Bar in the platform
+
 export const navMenu = [
   { label: "Home", href: "/" },
   { label: "Notes", href: "/notes" },
