@@ -2,6 +2,7 @@
 
 import { TEACHER_NOTE_UPLOAD_ROUTE } from "@/constants/routes";
 import { getCurrentDate } from "@/helpers/getDateUtilities";
+import { useAuthStore } from "@/stores/authStore";
 import {
   ArrowUpRight,
   Bell,
@@ -319,6 +320,7 @@ function UpcomingTasks() {
 }
 
 const TeacherDashboard = () => {
+  const user = useAuthStore((state) => state.user);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -338,20 +340,12 @@ const TeacherDashboard = () => {
                 {`${currentDate}`}
               </p>
               <h1 className="mt-2 text-2xl font-bold tracking-tight text-heading sm:text-3xl">
-                Welcome back, Rohan!
+                Welcome back, {`${user.full_name.split(" ")[0]}!`}
               </h1>
               <p className="mt-2 text-sm text-body">
                 Here&apos;s what&apos;s happening with your courses today.
               </p>
             </div>
-
-            <Link
-              href={TEACHER_NOTE_UPLOAD_ROUTE}
-              className="inline-flex w-fit items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover"
-            >
-              <Plus size={18} />
-              Create New Note
-            </Link>
           </section>
 
           {/* Stats */}
