@@ -6,10 +6,13 @@ import placeholder from "@/assets/images/placeholder.png";
 
 import { STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
 import { getImageUrl } from "@/helpers/getImage";
+import { maskPhone } from "@/helpers/maskPhone";
 import { useAuthStore } from "@/stores/authStore";
 
 import {
   Camera,
+  Eye,
+  EyeOff,
   Mail,
   MapPin,
   Phone,
@@ -38,6 +41,7 @@ const ProfileImage = ({ onImageSelect }) => {
   // Component state
   const [previewUrl, setPreviewUrl] = useState(null);
   const [error, setError] = useState("");
+  const [showPhone, setShowPhone] = useState(false);
 
   // User information
   const profileImage = getImageUrl(user?.profile?.profile_image);
@@ -107,10 +111,11 @@ const ProfileImage = ({ onImageSelect }) => {
       visible: Boolean(user?.email),
     },
     {
-      value: user?.phone_number,
+      value: showPhone ? user?.phone_number : maskPhone(user?.phone_number),
       icon: Phone,
       label: "Phone",
       visible: Boolean(user?.phone_number),
+      canReveal: true,
     },
     {
       value: user?.profile?.address,
@@ -303,6 +308,37 @@ const ProfileImage = ({ onImageSelect }) => {
                     >
                       {item.value}
                     </span>
+
+                    {item.canReveal && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPhone((visible) => !visible)}
+                        aria-label={
+                          showPhone ? "Hide phone number" : "Show phone number"
+                        }
+                        aria-pressed={showPhone}
+                        title={
+                          showPhone ? "Hide phone number" : "Show phone number"
+                        }
+                        className="
+                          shrink-0
+                          rounded-md
+                          p-0.5
+                          text-primary
+                          transition-colors
+                          hover:bg-primary/10
+                          focus-visible:outline-none
+                          focus-visible:ring-2
+                          focus-visible:ring-primary
+                        "
+                      >
+                        {showPhone ? (
+                          <EyeOff size={15} aria-hidden="true" />
+                        ) : (
+                          <Eye size={15} aria-hidden="true" />
+                        )}
+                      </button>
+                    )}
                   </div>
                 );
               })}
