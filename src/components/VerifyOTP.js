@@ -3,6 +3,7 @@
 import { resendOTPCode, verifyOTP } from "@/api/auth";
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 const VerifyOTP = ({ verifyData, onSuccess }) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
@@ -60,13 +61,14 @@ const VerifyOTP = ({ verifyData, onSuccess }) => {
 
         onSuccess(response.data);
       })
-      .catch((error) => {
-        console.log("OTP verification failed:", error);
+      .catch((e) => {
+        console.log("OTP verification failed:", e);
+        toast.error(e.response?.data?.error);
       });
   };
 
   const resendOTP = () => {
-    resendOTPCode(verifyData)
+    resendOTPCode({ phone_number: verifyData.phone_number })
       .then((response) => {
         console.log(response);
       })

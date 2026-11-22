@@ -9,6 +9,9 @@ const PasswordInput = (props) => {
       <input
         type={showPassword ? "text" : "password"}
         placeholder="Enter your password"
+        onPaste={(e) => e.preventDefault()}
+        onCut={(e) => e.preventDefault()}
+        onCopy={(e) => e.preventDefault()}
         className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300
             focus:border-primary focus:ring-4 focus:ring-primary/20"
         {...props}

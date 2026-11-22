@@ -6,7 +6,9 @@ import ComboBox from "@/components/ComboBox";
 import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
 import { emailRegex, passwordRegex } from "@/constants/regex";
-import { STUDENT_DASHBOARD_ROUTE } from "@/constants/routes";
+import { REGISTER_ROUTE, STUDENT_DASHBOARD_ROUTE } from "@/constants/routes";
+import { checkSignupSessionValidity } from "@/helpers/checkSignupSessionValidity";
+import { useAuthStore } from "@/stores/authStore";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -26,6 +28,7 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
   } = useForm({ mode: "onChange" });
 
   const router = useRouter();
+  const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
 
   const selectedSchoolFromForm = useWatch({ control, name: "schoolId" });
   const isExistingSchool = !!selectedSchoolFromForm;
@@ -53,10 +56,14 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
   }, [selectedSchoolFromForm, setValue, institutes]);
 
   const prepareData = (data) => {
+    console.log("Form Ko data:", data);
     const formData = new FormData();
-
-    formData.append("school", data.schoolId);
-    formData.append("school_name", data.school_name);
+    formData.append("full_name", data.full_name);
+    // Only send school when an existing institute is selected
+    if (data.schoolId) {
+      formData.append("school", data.schoolId);
+    }
+    formData.append("school_name", data?.school_name || null);
     formData.append("school_type", data.school_type.toLowerCase());
     formData.append("class_level", data.class_level);
     formData.append("faculty", data.faculty);
@@ -70,24 +77,34 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
 
   const submitForm = (data) => {
     setLoading(true);
+    if (!checkSignupSessionValidity()) {
+      router.replace(REGISTER_ROUTE);
+      toast.info("Signup Session Expired. Please try again!");
+      return;
+    }
     const selectedInstitute = institutes.find(
       (institute) => institute.id === data.schoolId,
     );
 
     const payload = {
       ...data,
-      school_name: selectedInstitute?.name || "",
+      school_name: selectedInstitute?.name || data?.school_name || "",
     };
+
     const input = prepareData(payload);
 
     completeStudentSignup(input)
       .then((response) => {
         toast.success("Student Sign Up Process Completed!");
         reset();
-        router.replace(STUDENT_DASHBOARD_ROUTE);
+        setAuthenticated({
+          accessToken: response.data.access,
+          refreshToken: response.data.refresh,
+          user: response.data.user,
+        });
       })
       .catch((error) => {
-        toast.error(error.response.data);
+        toast.error(error?.response?.data);
         console.log(error);
       })
       .finally(() => setLoading(false));
@@ -110,6 +127,33 @@ const StudentForm = ({ institutes, faculties, classLevels }) => {
         {/* Form */}
         <form onSubmit={handleSubmit(submitForm)} className="mt-8 space-y-5">
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm: gap-x-4 md:grid-cols-4 md:gap-x-4 lg:grid-cols-6 lg:gap-4">
+            {/* Full Name  */}
+            <div className="col-span-full">
+              <label
+                htmlFor="full_name"
+                className="block text-sm font-medium text-heading mb-2"
+              >
+                Full Name
+              </label>
+
+              <input
+                type="text"
+                id="full_name"
+                placeholder="Full Name"
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300
+                        focus:border-primary focus:ring-4 focus:ring-primary/20"
+                required
+                autoComplete="off"
+                {...register("full_name", {
+                  required: "Full Name is required",
+                  minLength: {
+                    value: 2,
+                    message: "Name must be at least 2 characters",
+                  },
+                })}
+              />
+            </div>
+
             {/* Email */}
             <div className="col-span-full">
               <label

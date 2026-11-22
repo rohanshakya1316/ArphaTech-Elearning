@@ -1,33 +1,18 @@
 "use client";
-import Image from "next/image";
-import logo from "@/assets/images/logo.jpeg";
-import Spinner from "@/components/Spinner";
-import PasswordInput from "@/components/PasswordInput";
-import { useForm } from "react-hook-form";
-import {
-  FORGOT_PASSWORD_ROUTE,
-  HOME_ROUTE,
-  STUDENT_DASHBOARD_ROUTE,
-  TEACHER_DASHBOARD_ROUTE,
-  REGISTER_ROUTE,
-} from "@/constants/routes";
-import { useState } from "react";
-import Link from "next/link";
 import { login } from "@/api/auth";
-import { useRouter } from "next/navigation";
-import useAuthStore from "@/stores/authStore";
+import PasswordInput from "@/components/PasswordInput";
+import Spinner from "@/components/Spinner";
+import { FORGOT_PASSWORD_ROUTE, REGISTER_ROUTE } from "@/constants/routes";
+import { useAuthStore } from "@/stores/authStore";
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { passwordRegex, phoneRegex } from "@/constants/regex";
 
 const LoginPage = () => {
-  const { loginUser } = useAuthStore.getState();
+  const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
   const [loading, setLoading] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ mode: "onChange" });
-  const router = useRouter();
+  const { register, handleSubmit } = useForm();
 
   const submitForm = (data) => {
     setLoading(true);
@@ -36,35 +21,37 @@ const LoginPage = () => {
       password: data.password,
     })
       .then((response) => {
-        loginUser({ user: response.data });
-        console.log(response);
+        setAuthenticated({
+          accessToken: response.data.access,
+          refreshToken: response.data.refresh,
+          user: response.data.user,
+        });
         toast.success("Login Successful");
-        if (response.data.user.role === "student")
-          router.replace(STUDENT_DASHBOARD_ROUTE);
-        else if (response.data.user.role === "instructor")
-          router.replace(TEACHER_DASHBOARD_ROUTE);
-        else router.replace(HOME_ROUTE);
       })
       .catch((error) => {
-        toast.error(`${error.response.data.detail}`);
+        const errorData = error.response?.data;
+
+        // * The API can answer with `detail`, `message`, field errors or a
+        // * plain string, so always fall back to a readable message instead
+        // * of rendering "undefined" in the toast.
+        const message =
+          (typeof errorData === "string" && errorData) ||
+          errorData?.detail ||
+          errorData?.message ||
+          errorData?.non_field_errors?.[0] ||
+          "Unable to log in. Please check your phone number and password.";
+
+        toast.error(message);
       })
       .finally(() => {
         setLoading(false);
       });
   };
   return (
-    <section className="mx-auto bg-gray-500 rounded-2xl my-4">
+    <section className="mx-auto bg-gray-500 rounded-2xl my-4 overflow-hidden">
       <div className="w-full max-w-md bg-white/90 p-8">
         {/* Header */}
         <div className="flex flex-col items-center justify-center text-center">
-          <Image
-            src={logo}
-            alt="Logo"
-            width="auto"
-            height="auto"
-            loading="eager"
-            className="h-20 w-24 mix-blend-multiply"
-          />
           <h2 className="text-3xl font-bold text-heading">Welcome Back</h2>
 
           <p className="mt-2 text-body">
@@ -91,21 +78,7 @@ const LoginPage = () => {
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition-all duration-300 focus:border-primary focus:ring-4 focus:ring-primary/20"
               required
               autoComplete="off"
-              {...register("phone_number", {
-                required: "Phone Number is required",
-                minLength: {
-                  value: 10,
-                  message: "Valid Nepali Phone Number is of 10 digits",
-                },
-                maxLength: {
-                  value: 10,
-                  message: "Valid Nepali Phone Number is of 10 digits",
-                },
-                pattern: {
-                  value: phoneRegex,
-                  message: "Phone Number must start with 98 or 97 or 96",
-                },
-              })}
+              {...register("phone_number")}
             />
           </div>
           {/* Password */}
@@ -117,38 +90,8 @@ const LoginPage = () => {
               Password
             </label>
 
-            <PasswordInput
-              id="password"
-              {...register("password", {
-                required: "Password is required",
-                pattern: {
-                  value: passwordRegex,
-                  message:
-                    "Password must be at least 8 characters with one special symbol, uppercase, lowercase and number",
-                },
-              })}
-            />
+            <PasswordInput id="password" {...register("password")} />
           </div>
-          {Object.keys(errors).length > 0 && (
-            <div
-              className="error-summary-box"
-              style={{
-                color: "red",
-                border: "1px solid red",
-                padding: "10px",
-                marginBottom: "15px",
-              }}
-            >
-              <h4>Please fix the following errors:</h4>
-              <ul>
-                {Object.values(errors).map((error, index) => (
-                  <li className="ml-8 list-disc" key={index}>
-                    {error.message}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
 
           {/* Terms and Conditions */}
           <div className="flex items-center justify-between text-sm">
