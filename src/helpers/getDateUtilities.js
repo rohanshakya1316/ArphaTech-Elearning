@@ -15,7 +15,7 @@ export const getCurrentDate = () => {
   return readableDate;
 };
 
-export const getFormattedDate = (date) => {
+export const getFormattedDateforDisplay = (date) => {
   const parsedDate = parseISO(date);
 
   // 1. Standard readable date
@@ -31,4 +31,12 @@ export const getFormattedDate = (date) => {
   // console.log(formatDistanceToNow(parsedDate, { addSuffix: true }));
 
   return formattedDate;
+};
+
+export const getFormattedDate = (date) => {
+  const parsedDate = parseISO(date);
+  const formatted = format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss");
+
+  // console.log(formatted); // "2026-11-18T10:30:00"
+  return formatted;
 };
