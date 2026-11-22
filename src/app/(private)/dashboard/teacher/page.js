@@ -1,7 +1,7 @@
-import React from "react";
+import TeacherDashboard from "./_components/TeacherDashboard";
 
 const TeacherDashboardPage = () => {
-  return <div>TeacherDashboardPage</div>;
+  return <TeacherDashboard />;
 };
 
 export default TeacherDashboardPage;

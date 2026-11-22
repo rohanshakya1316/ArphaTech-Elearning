@@ -17,7 +17,7 @@ const deleteNote = async (id) => {
   return await api.delete(`${config.apiUrl}/api/v1/notes/${id}/delete/`);
 };
 
-const getAllNotes = async () => {
+const getAllNotesByTeacher = async () => {
   return await api.get(`${config.apiUrl}/api/v1/notes/teacher/my-notes/`);
 };
 
@@ -49,7 +49,7 @@ export {
   uploadNote,
   updateNote,
   deleteNote,
-  getAllNotes,
+  getAllNotesByTeacher,
   getAllPublishedNotes,
   getPublishedNotesDetails,
   getNotesByStatus,
