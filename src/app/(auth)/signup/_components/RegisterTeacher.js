@@ -15,6 +15,15 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+const ALLOWED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".pdf"];
+const ALLOWED_MIME_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "application/pdf",
+];
+
 const RegisterTeacher = () => {
   const [submitting, setSubmitting] = useState(false);
   const [verificationDocument, setVerificationDocument] = useState([]);
@@ -43,6 +52,14 @@ const RegisterTeacher = () => {
     loading: dataLoading,
     error,
   } = useInitialData();
+
+  const isAllowedFile = (file) => {
+    const lowerName = file.name.toLowerCase();
+    return (
+      ALLOWED_MIME_TYPES.includes(file.type) ||
+      ALLOWED_EXTENSIONS.some((ext) => lowerName.endsWith(ext))
+    );
+  };
 
   const removeVerificationDocument = (indexToRemove) => {
     setDocumentUpload(false);
@@ -306,17 +323,46 @@ const RegisterTeacher = () => {
                   className="hidden"
                   {...register("verification_document", {
                     required: "Verification document is required",
+                    validate: {
+                      fileSize: (files) => {
+                        const file = files?.[0];
+                        if (!file) return true;
+                        return (
+                          file.size <= MAX_FILE_SIZE ||
+                          "File size must not exceed 5 MB."
+                        );
+                      },
+                      fileType: (files) => {
+                        const file = files?.[0];
+                        if (!file) return true;
+                        return (
+                          isAllowedFile(file) ||
+                          "Only PNG, JPG, JPEG, WebP, or PDF files are allowed."
+                        );
+                      },
+                    },
                     onChange: (event) => {
                       const files = Array.from(event.target.files || []);
-                      if (files.length === 0) return;
+                      const file = files[0];
+
+                      if (!file) {
+                        setVerificationDocument([]);
+                        setDocumentUpload(false);
+                        setLocalVerificationDocument([]);
+                        return;
+                      }
+
+                      if (file.size > MAX_FILE_SIZE || !isAllowedFile(file)) {
+                        setLocalVerificationDocument([]);
+                        setDocumentUpload(false);
+                        return;
+                      }
 
                       setVerificationDocument(files);
                       setDocumentUpload(true);
-
-                      const urls = files.map((file) =>
-                        URL.createObjectURL(file),
+                      setLocalVerificationDocument(
+                        files.map((f) => URL.createObjectURL(f)),
                       );
-                      setLocalVerificationDocument(urls);
                     },
                   })}
                 />
