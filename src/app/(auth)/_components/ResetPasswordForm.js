@@ -17,6 +17,7 @@ const ResetPasswordForm = () => {
     control,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors },
   } = useForm();
 
@@ -88,11 +89,10 @@ const ResetPasswordForm = () => {
                   })}
                 />
               </div>
-              {errors.new_password && (
-                <div className="mt-1 text-sm text-red-500 w-2xs">
-                  {errors.new_password.message}
-                </div>
-              )}
+              <div className={"mt-1 text-sm w-2xs text-red-500"}>
+                Password must be at least 8 chars one special symbol, uppercase,
+                lowercase & number
+              </div>
             </div>
 
             {/* Confirm */}
