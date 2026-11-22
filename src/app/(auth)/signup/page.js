@@ -63,7 +63,6 @@ const SignupPage = () => {
     })
       .then((response) => {
         localStorage.setItem("signUpToken", response.data.access);
-        localStorage.setItem("phoneNumber", response.data.phone_number);
         setLoading(false);
         setOpen(true);
       })
