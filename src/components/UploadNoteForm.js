@@ -12,6 +12,7 @@ import {
 
 import BackButton from "./BackButton";
 import ComboBox from "./ComboBox";
+import { useEffect } from "react";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -20,7 +21,14 @@ const FieldError = ({ error }) =>
     <p className="mt-1.5 text-xs font-medium text-error">{error.message}</p>
   ) : null;
 
-const UploadNoteForm = ({ onSubmit, onCancel, subjects, classLevels }) => {
+const UploadNoteForm = ({
+  note,
+  onSubmit,
+  onCancel,
+  subjects,
+  classLevels,
+  isEditing = false,
+}) => {
   const {
     register,
     control,
@@ -39,6 +47,17 @@ const UploadNoteForm = ({ onSubmit, onCancel, subjects, classLevels }) => {
     },
     mode: "onSubmit",
   });
+
+  useEffect(() => {
+    if (note) {
+      reset({
+        title: note.title || "",
+        description: note.description || "",
+        subjectId: note.subject_name || note.subject_name?.[0].id || "",
+        class_level: note.class_level_name|| note.class_level_name?.[0].id || "",
+      });
+    }
+  }, [note, reset]);
 
   // Watch individual fields using useWatch
   const selectedFile = useWatch({
@@ -145,11 +164,13 @@ const UploadNoteForm = ({ onSubmit, onCancel, subjects, classLevels }) => {
 
             <div>
               <h2 className="text-lg font-semibold text-heading">
-                Add New Notes
+                {isEditing ? "Edit Note" : "Add New Notes"}
               </h2>
 
               <p className="mt-1 text-sm text-body">
-                Upload study materials and organize them for your students.
+                {isEditing
+                  ? "Edit your existing note for resubmission"
+                  : "Upload study materials and organize them for your students."}
               </p>
             </div>
 
@@ -416,7 +437,7 @@ const UploadNoteForm = ({ onSubmit, onCancel, subjects, classLevels }) => {
             ) : (
               <>
                 <FileText size={17} />
-                Add Notes
+                {isEditing ? "Update Note" : "Add Note"}{" "}
               </>
             )}
           </button>
