@@ -18,14 +18,14 @@ const UploadNotePage = () => {
     } catch (error) {
       console.error("Upload error:", error);
 
-      toast.error(error.response?.data?.message || "Notes Upload Failed");
+      toast.error(error.response?.data?.detail || "Notes Upload Failed");
 
       return false;
     }
   };
 
   return (
-    <UploadNoteForm
+    <UploadNoteForm 
       onSubmit={handleUploadNote}
       onCancel={() => window.history.back()}
       classLevels={classLevels}
