@@ -1,4 +1,5 @@
 import config from "@/config/config";
+import { AUTH_EVENTS, broadcastAuthEvent } from "@/helpers/authChannel";
 import { useAuthStore } from "@/stores/authStore";
 import axios from "axios";
 
@@ -60,16 +61,11 @@ api.interceptors.response.use(
         return api(originalRequest);
 
       } catch (refreshError) {
-        // Refresh failed: clear authentication
-        useAuthStore.setState({
-          user: null,
-          accessToken: null,
-          refreshToken: null,
-          profileCompleted: false,
-          otpVerified: false,
-          signupToken: null,
-          authState: "guest",
-        });
+        // Refresh failed: clear authentication locally and in every other tab
+        // so no tab keeps showing a session that no longer exists.
+        useAuthStore.getState().clearAuth();
+
+        broadcastAuthEvent(AUTH_EVENTS.LOGOUT);
 
         return Promise.reject(refreshError);
       }

@@ -27,9 +27,13 @@ const Profile = () => {
   }, []);
 
   const handleLogout = async () => {
+    setProfileOpen(false);
+
     const message = await logout();
-    console.log(message);
-    toast.success(message);
+
+    if (message) {
+      toast.success(message);
+    }
   };
 
   const dashboardHref =

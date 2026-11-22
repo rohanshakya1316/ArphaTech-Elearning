@@ -1,23 +1,53 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Menu, Bell } from "lucide-react";
+import { toast } from "react-toastify";
+
 import DashboardSidebar from "./DashboardSidebar";
+import { LOGIN_ROUTE } from "@/constants/routes";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function DashboardLayout({ role, user, onLogout, children }) {
+  const router = useRouter();
+
+  const storeUser = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
 
+  // * Dashboard layouts are server components, so fall back to the store to
+  // * always have the signed-in user and a working logout action.
+  const currentUser = user ?? storeUser;
+
   const handleToggleSidebar = () => {
     setCollapsed((prev) => !prev);
+  };
+
+  const handleLogout = async () => {
+    if (onLogout) {
+      await onLogout();
+      return;
+    }
+
+    const message = await logout();
+
+    if (message) {
+      toast.success(message);
+    }
+
+    router.replace(LOGIN_ROUTE);
+    router.refresh();
   };
 
   return (
     <div className="min-h-screen bg-background">
       <DashboardSidebar
         role={role}
-        user={user}
-        onLogout={onLogout}
+        user={currentUser}
+        onLogout={handleLogout}
         mobileOpen={mobileOpen}
         onClose={() => setMobileOpen(false)}
         collapsed={collapsed}
@@ -43,7 +73,9 @@ export default function DashboardLayout({ role, user, onLogout, children }) {
 
             <div>
               <h2 className="text-sm font-semibold text-heading">
-                {role.charAt(0).toUpperCase() + role.slice(1)} Dashboard
+                {role
+                  ? `${role.charAt(0).toUpperCase()}${role.slice(1)} Dashboard`
+                  : "Dashboard"}
               </h2>
               <p className="hidden text-xs text-muted sm:block">
                 Manage your workspace

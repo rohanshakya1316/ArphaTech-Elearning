@@ -2,13 +2,7 @@
 import { login } from "@/api/auth";
 import PasswordInput from "@/components/PasswordInput";
 import Spinner from "@/components/Spinner";
-import { STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
-import {
-  FORGOT_PASSWORD_ROUTE,
-  REGISTER_ROUTE,
-  STUDENT_DASHBOARD_ROUTE,
-  TEACHER_DASHBOARD_ROUTE,
-} from "@/constants/routes";
+import { FORGOT_PASSWORD_ROUTE, REGISTER_ROUTE } from "@/constants/routes";
 import { useAuthStore } from "@/stores/authStore";
 import Link from "next/link";
 import { useState } from "react";
@@ -35,7 +29,19 @@ const LoginPage = () => {
         toast.success("Login Successful");
       })
       .catch((error) => {
-        toast.error(`${error.response?.data?.detail}`);
+        const errorData = error.response?.data;
+
+        // * The API can answer with `detail`, `message`, field errors or a
+        // * plain string, so always fall back to a readable message instead
+        // * of rendering "undefined" in the toast.
+        const message =
+          (typeof errorData === "string" && errorData) ||
+          errorData?.detail ||
+          errorData?.message ||
+          errorData?.non_field_errors?.[0] ||
+          "Unable to log in. Please check your phone number and password.";
+
+        toast.error(message);
       })
       .finally(() => {
         setLoading(false);
