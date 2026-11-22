@@ -4,7 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { getAllNotesByTeacher, deleteNote } from "@/api/notes";
-import { PUBLISHED_STATUS } from "@/constants/noteStatus";
+import {
+  PUBLISHED_STATUS,
+  TEACHER_REVIEW_STATUS,
+} from "@/constants/noteStatus";
 import {
   TEACHER_NOTE_ROUTE,
   TEACHER_NOTE_UPLOAD_ROUTE,
@@ -31,6 +34,8 @@ import { getFormattedDateforDisplay } from "@/helpers/getDateUtilities";
 const NoteCard = ({ note, view, onDelete }) => {
   const [expanded, setExpanded] = useState(false);
   const description = note.description || "";
+
+  const statusWithEditNoteDisable = [PUBLISHED_STATUS, TEACHER_REVIEW_STATUS];
 
   return (
     <article
@@ -152,13 +157,15 @@ const NoteCard = ({ note, view, onDelete }) => {
 
         {/* Actions */}
         <div className="flex flex-wrap gap-2 sm:justify-end">
-          <Link
-            href={`${TEACHER_NOTE_ROUTE}/${note.id}/edit`}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-blue-600 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 sm:flex-none"
-          >
-            <Pencil size={16} />
-            Edit
-          </Link>
+          {!statusWithEditNoteDisable.includes(note.status) && (
+            <Link
+              href={`${TEACHER_NOTE_ROUTE}/${note.id}/edit`}
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-blue-600 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 sm:flex-none"
+            >
+              <Pencil size={16} />
+              Edit
+            </Link>
+          )}
 
           <button
             type="button"
