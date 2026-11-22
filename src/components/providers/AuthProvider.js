@@ -9,6 +9,7 @@ import {
   TEACHER_DASHBOARD_ROUTE,
 } from "@/constants/routes";
 import { STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
+import { AUTH_CHANNEL_NAME, AUTH_EVENTS } from "@/helpers/authChannel";
 
 const getDashboardRoute = (user) => {
   if (user?.role === STUDENT_ROLE) {
@@ -28,13 +29,13 @@ export default function AuthProvider({ children }) {
   useEffect(() => {
     if (typeof BroadcastChannel === "undefined") return;
 
-    const channel = new BroadcastChannel("auth");
+    const channel = new BroadcastChannel(AUTH_CHANNEL_NAME);
 
     channel.onmessage = async (event) => {
       const { type } = event.data || {};
 
       switch (type) {
-        case "LOGIN": {
+        case AUTH_EVENTS.LOGIN: {
           // Synchronize Zustand with the latest persisted state
           await useAuthStore.persist.rehydrate();
 
@@ -51,7 +52,7 @@ export default function AuthProvider({ children }) {
           break;
         }
 
-        case "LOGOUT": {
+        case AUTH_EVENTS.LOGOUT: {
           // Clear authentication without calling the logout API again
           useAuthStore.getState().clearAuth();
 

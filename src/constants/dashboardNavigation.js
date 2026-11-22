@@ -16,7 +16,12 @@ import {
   Users,
 } from "lucide-react";
 import { ADMIN_ROLE, STUDENT_ROLE, TEACHER_ROLE } from "./roles";
-import { PROFILE_ROUTE, TEACHER_DASHBOARD_ROUTE, TEACHER_NOTE_ROUTE } from "./routes";
+import {
+  PROFILE_ROUTE,
+  STUDENT_DASHBOARD_ROUTE,
+  TEACHER_DASHBOARD_ROUTE,
+  TEACHER_NOTE_ROUTE,
+} from "./routes";
 
 export const roleLabels = {
   [STUDENT_ROLE]: "Student Portal",
@@ -31,7 +36,7 @@ export const dashboardNavigation = {
       items: [
         {
           label: "Dashboard",
-          href: "/student/dashboard",
+          href: STUDENT_DASHBOARD_ROUTE,
           icon: LayoutDashboard,
         },
         {

@@ -29,13 +29,14 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Profile from "./Profile";
 
 const NavBar = () => {
   const pathname = usePathname();
+  const router = useRouter();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -51,9 +52,13 @@ const NavBar = () => {
   ];
 
   const handleLogout = async () => {
+    setMobileOpen(false);
+
     const message = await logout();
-    console.log(message);
-    toast.success(message);
+
+    if (message) {
+      toast.success(message);
+    }
   };
 
   const dashboardHref =
@@ -90,12 +95,13 @@ const NavBar = () => {
     const query = searchValue.trim();
     if (!query) return;
 
+    setMobileOpen(false);
     router.push(`/courses?search=${encodeURIComponent(query)}`);
   };
 
   if (hideNavBarRoutes.includes(pathname)) return null;
-  
-  if (pathname.includes(DASHBOARD_ROUTE)) return;
+
+  if (pathname.startsWith(DASHBOARD_ROUTE)) return null;
 
   return (
     <>
@@ -147,7 +153,10 @@ const NavBar = () => {
 
               <div className="mr-4 flex items-center justify-center gap-2 md:pl-48 lg:mr-0 lg:pl-0">
                 {/* Desktop search */}
-                <div className="hidden max-w-xl items-center rounded-2xl border border-slate-200 bg-slate-50 px-3 transition-all focus-within:border-slate-500 md:flex">
+                <form
+                  onSubmit={submitSearch}
+                  className="hidden max-w-xl items-center rounded-2xl border border-slate-200 bg-slate-50 px-3 transition-all focus-within:border-slate-500 md:flex"
+                >
                   <Search size={19} className="shrink-0 text-slate-400" />
                   <input
                     type="search"
@@ -158,7 +167,7 @@ const NavBar = () => {
                     aria-label="Search"
                     className="h-8 w-full bg-transparent px-2.5 text-sm text-slate-700 outline-none placeholder:text-slate-400"
                   />
-                </div>
+                </form>
 
                 {/* Desktop authentication */}
                 <div className="hidden shrink-0 items-center gap-3 md:flex">

@@ -1,4 +1,5 @@
 import { logout as logoutAPI } from "@/api/auth";
+import { AUTH_EVENTS, broadcastAuthEvent } from "@/helpers/authChannel";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -117,17 +118,7 @@ export const useAuthStore = create(
         });
 
         // Notify other tabs about successful login
-        if (typeof BroadcastChannel !== "undefined") {
-          try {
-            const channel = new BroadcastChannel("auth");
-            channel.postMessage({
-              type: "LOGIN",
-            });
-            channel.close();
-          } catch (error) {
-            console.error("Failed to broadcast login:", error);
-          }
-        }
+        broadcastAuthEvent(AUTH_EVENTS.LOGIN);
       },
 
       // Clear local authentication state only
@@ -145,30 +136,28 @@ export const useAuthStore = create(
       logout: async () => {
         const { refreshToken } = get();
 
+        let message = "Logged out successfully.";
+
         try {
           const response = await logoutAPI(refreshToken);
-          return response.data.message;
+
+          message = response?.data?.message || message;
         } catch (error) {
+          // * The local session must always be cleared, even when the server
+          // * call fails (offline, expired token, ...), so no success toast
+          // * should be shown in that case.
           console.error("Failed to notify server during logout:", error);
+
+          message = null;
         } finally {
           // Clear current tab
           get().clearAuth();
 
           // Notify other tabs
-          if (typeof BroadcastChannel !== "undefined") {
-            try {
-              const channel = new BroadcastChannel("auth");
-
-              channel.postMessage({
-                type: "LOGOUT",
-              });
-
-              channel.close();
-            } catch (error) {
-              console.error("Failed to broadcast logout:", error);
-            }
-          }
+          broadcastAuthEvent(AUTH_EVENTS.LOGOUT);
         }
+
+        return message;
       },
     }),
 

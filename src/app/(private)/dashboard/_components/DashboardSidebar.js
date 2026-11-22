@@ -13,24 +13,28 @@ import {
   dashboardNavigation,
   roleLabels,
 } from "@/constants/dashboardNavigation";
+import {
+  ADMIN_DASHBOARD_ROUTE,
+  STUDENT_DASHBOARD_ROUTE,
+  TEACHER_DASHBOARD_ROUTE,
+} from "@/constants/routes";
 import Image from "next/image";
+
+const dashboardRoutes = [
+  STUDENT_DASHBOARD_ROUTE,
+  TEACHER_DASHBOARD_ROUTE,
+  ADMIN_DASHBOARD_ROUTE,
+];
 
 const SidebarNavItem = ({ item, pathname, collapsed, onNavigate }) => {
   const Icon = item.icon;
 
+  // Dashboard routes should also be active on their nested pages.
+  const isDashboard = dashboardRoutes.includes(item.href);
+
   const isActive =
     pathname === item.href ||
-    (item.href !== "/student/dashboard" &&
-      item.href !== "/teacher/dashboard" &&
-      item.href !== "/admin/dashboard" &&
-      pathname.startsWith(`${item.href}/`));
-
-  // Dashboard routes should also be active on their nested pages.
-  const isDashboard = [
-    "/student/dashboard",
-    "/teacher/dashboard",
-    "/admin/dashboard",
-  ].includes(item.href);
+    (!isDashboard && pathname.startsWith(`${item.href}/`));
 
   const active = isActive || (isDashboard && pathname.startsWith(item.href));
 
