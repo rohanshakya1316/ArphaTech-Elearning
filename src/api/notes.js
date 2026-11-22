@@ -21,6 +21,10 @@ const getAllNotesByTeacher = async () => {
   return await api.get(`${config.apiUrl}/api/v1/notes/teacher/my-notes/`);
 };
 
+const getNoteById = async (id) => {
+  return await api.get(`${config.apiUrl}/api/v1/notes/teacher/my-notes/${id}/`);
+};
+
 const getAllPublishedNotes = async () => {
   return await api.get(`${config.apiUrl}/api/v1/notes/`);
 };
@@ -50,6 +54,7 @@ export {
   updateNote,
   deleteNote,
   getAllNotesByTeacher,
+  getNoteById,
   getAllPublishedNotes,
   getPublishedNotesDetails,
   getNotesByStatus,
