@@ -15,6 +15,7 @@ import {
 } from "@/constants/dashboardNavigation";
 import {
   ADMIN_DASHBOARD_ROUTE,
+  HOME_ROUTE,
   STUDENT_DASHBOARD_ROUTE,
   TEACHER_DASHBOARD_ROUTE,
 } from "@/constants/routes";
@@ -85,9 +86,9 @@ export default function DashboardSidebar({
   const normalizedRole = role?.toLowerCase();
   const navigation = dashboardNavigation[normalizedRole] || [];
 
-  const displayName = user.full_name || user.name || "User";
+  const displayName = user.full_name || "User";
   const email = user.email || "";
-  const profileImage = user.profile_image || user.profile_picture;
+  const profileImage = user.profile?.profile_image;
 
   const handleNavigate = () => {
     onClose?.();
@@ -122,7 +123,7 @@ export default function DashboardSidebar({
           }`}
         >
           <Link
-            href="/"
+            href={HOME_ROUTE}
             onClick={handleNavigate}
             className="flex min-w-0 items-center gap-2.5"
           >
@@ -181,14 +182,16 @@ export default function DashboardSidebar({
         {/* Bottom section */}
         <div className="shrink-0 border-t border-slate-100 p-3">
           <div
-            className={`flex items-center gap-3 rounded-lg p-2 ${
-              collapsed ? "justify-center" : ""
+            className={`flex items-center gap-3 rounded-lg p-2 transition-all ${
+              collapsed ? "flex-col justify-center" : ""
             }`}
           >
             {profileImage ? (
               <Image
                 src={profileImage}
                 alt={displayName}
+                width={10}
+                height={10}
                 className="h-9 w-9 shrink-0 rounded-full object-cover"
               />
             ) : (

@@ -21,6 +21,7 @@ import {
   STUDENT_DASHBOARD_ROUTE,
   TEACHER_DASHBOARD_ROUTE,
   TEACHER_NOTE_ROUTE,
+  USER_MANAGEMENT_ROUTE,
 } from "./routes";
 
 export const roleLabels = {
@@ -171,13 +172,8 @@ export const dashboardNavigation = {
       title: "Management",
       items: [
         {
-          label: "Students",
-          href: "/admin/students",
-          icon: GraduationCap,
-        },
-        {
-          label: "Teachers",
-          href: "/admin/teachers",
+          label: "Users",
+          href: USER_MANAGEMENT_ROUTE,
           icon: Users,
         },
         {

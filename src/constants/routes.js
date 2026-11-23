@@ -18,3 +18,6 @@ export const ADMIN_DASHBOARD_ROUTE = `${DASHBOARD_ROUTE}/admin`;
 // * Notes Management Routes for Teachers
 export const TEACHER_NOTE_ROUTE = `${TEACHER_DASHBOARD_ROUTE}/notes`
 export const TEACHER_NOTE_UPLOAD_ROUTE = `${TEACHER_NOTE_ROUTE}/upload`
+
+// * Admin Routes
+export const USER_MANAGEMENT_ROUTE = `${ADMIN_DASHBOARD_ROUTE}/user-management`

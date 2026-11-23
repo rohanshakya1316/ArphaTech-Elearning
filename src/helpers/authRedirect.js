@@ -1,5 +1,6 @@
-import { STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
+import { ADMIN_ROLE, STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
 import {
+  ADMIN_DASHBOARD_ROUTE,
   FORGOT_PASSWORD_ROUTE,
   HOME_ROUTE,
   LOGIN_ROUTE,
@@ -96,6 +97,10 @@ export const getAuthRedirect = ({ authState, userRole, pathname }) => {
 
       if (userRole === TEACHER_ROLE) {
         return TEACHER_DASHBOARD_ROUTE;
+      }
+
+      if (userRole === ADMIN_ROLE) {
+        return ADMIN_DASHBOARD_ROUTE;
       }
       return HOME_ROUTE;
     }

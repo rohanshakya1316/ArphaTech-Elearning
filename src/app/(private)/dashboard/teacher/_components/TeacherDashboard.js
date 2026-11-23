@@ -1,5 +1,6 @@
 "use client";
 
+import getTeacherPoints from "@/api/points";
 import { TEACHER_NOTE_UPLOAD_ROUTE } from "@/constants/routes";
 import { getCurrentDate } from "@/helpers/getDateUtilities";
 import { useAuthStore } from "@/stores/authStore";
@@ -21,7 +22,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const stats = [
   {
@@ -325,6 +326,18 @@ const TeacherDashboard = () => {
   const [search, setSearch] = useState("");
 
   const currentDate = getCurrentDate();
+
+  useEffect(() => {
+    const fetchPoint = async () => {
+      try {
+        const response = await getTeacherPoints();
+        console.log("Teacher Points:", response.data?.total_points);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchPoint();
+  }, []);
 
   return (
     <div className="bg-background text-heading">
