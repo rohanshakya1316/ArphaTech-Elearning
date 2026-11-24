@@ -17,11 +17,13 @@ import {
 } from "lucide-react";
 import { ADMIN_ROLE, STUDENT_ROLE, TEACHER_ROLE } from "./roles";
 import {
+  ADMIN_DASHBOARD_ROUTE,
   PROFILE_ROUTE,
   STUDENT_DASHBOARD_ROUTE,
   TEACHER_DASHBOARD_ROUTE,
   TEACHER_NOTE_ROUTE,
   USER_MANAGEMENT_ROUTE,
+  VERIFY_TEACHER_ROUTE,
 } from "./routes";
 
 export const roleLabels = {
@@ -29,6 +31,12 @@ export const roleLabels = {
   [TEACHER_ROLE]: "Teacher Portal",
   [ADMIN_ROLE]: "Administration",
 };
+
+export const dashboardRoutes = [
+  STUDENT_DASHBOARD_ROUTE,
+  TEACHER_DASHBOARD_ROUTE,
+  ADMIN_DASHBOARD_ROUTE,
+];
 
 export const dashboardNavigation = {
   [STUDENT_ROLE]: [
@@ -158,7 +166,7 @@ export const dashboardNavigation = {
       items: [
         {
           label: "Dashboard",
-          href: "/admin/dashboard",
+          href: ADMIN_DASHBOARD_ROUTE,
           icon: LayoutDashboard,
         },
         {
@@ -175,6 +183,11 @@ export const dashboardNavigation = {
           label: "Users",
           href: USER_MANAGEMENT_ROUTE,
           icon: Users,
+        },
+        {
+          label: "Verify Teacher",
+          href: VERIFY_TEACHER_ROUTE,
+          icon: UserRound,
         },
         {
           label: "Courses",
@@ -218,7 +231,7 @@ export const dashboardNavigation = {
       items: [
         {
           label: "My Profile",
-          href: "/admin/profile",
+          href: PROFILE_ROUTE,
           icon: UserRound,
         },
         {

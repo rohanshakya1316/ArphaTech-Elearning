@@ -1,15 +1,28 @@
 "use client";
 
-import { getAllUsersByAdmin } from "@/api/auth";
+import { getAllUsersByAdmin, updateUserByAdmin } from "@/api/auth";
 import Pagination from "@/components/Pagination";
 import {
   ADMIN_ROLE,
+  EDITOR_ROLE,
   STUDENT_ROLE,
   TEACHER_ROLE,
   USER_ROLES,
 } from "@/constants/roles";
+import { ADD_EDITOR_ROUTE } from "@/constants/routes";
 import { getFormattedDateforDisplay } from "@/helpers/getDateUtilities";
-import { Eye, Mail, Phone, Search, UserRound, Users } from "lucide-react";
+import {
+  Eye,
+  Loader2,
+  Mail,
+  Phone,
+  Plus,
+  Search,
+  UserRound,
+  Users,
+  X,
+} from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -25,12 +38,15 @@ const UserManagementPage = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("-created_at");
 
+  // Update user role and status
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [role, setRole] = useState("");
+  const [isActive, setIsActive] = useState(false);
+
   // Loading
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-
-  const [selectedUser, setSelectedUser] = useState(null);
 
   // Fetch Users
   useEffect(() => {
@@ -74,6 +90,49 @@ const UserManagementPage = () => {
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+    setRole(user.role);
+    setIsActive(user.is_active);
+  };
+
+  const handleUpdateUser = async () => {
+    try {
+      setLoading(true);
+
+      const updatedData = {
+        role,
+        is_active: isActive,
+      };
+
+      const response = await updateUserByAdmin(
+        selectedUser.phone_number,
+        updatedData,
+      );
+
+      // Update the user in your existing table
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === selectedUser.id ? { ...user, ...updatedData } : user,
+        ),
+      );
+
+      toast.success(response.data?.message || "User updated successfully!");
+
+      setSelectedUser(null);
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.detail ||
+          "Failed to update user.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Role Badge
   const getRoleStyle = (role) => {
     switch (role?.toLowerCase()) {
@@ -87,7 +146,7 @@ const UserManagementPage = () => {
         return "bg-emerald-50 text-emerald-700";
 
       default:
-        return "bg-slate-100 text-slate-600";
+        return "bg-slate-300 text-slate-600";
     }
   };
 
@@ -100,14 +159,24 @@ const UserManagementPage = () => {
             <Users size={28} />
           </div>
 
-          <div>
-            <h1 className="text-2xl font-bold text-heading sm:text-3xl">
-              User Management
-            </h1>
-
-            <p className="mt-1 text-sm text-slate-500 sm:text-base">
-              Manage and monitor all registered users.
-            </p>
+          <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-heading sm:text-3xl">
+                User Management
+              </h1>
+              <p className="mt-1 text-sm text-slate-500 sm:text-base">
+                Manage and monitor all registered users.
+              </p>
+            </div>
+            <div className="shrink-0">
+              <Link
+                href={ADD_EDITOR_ROUTE}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white shadow-md shadow-primary/20 transition hover:bg-primary-hover sm:w-auto"
+              >
+                <Plus size={17} />
+                Add Editor
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -308,7 +377,7 @@ const UserManagementPage = () => {
                       <td className="px-6 py-4 text-center">
                         <button
                           type="button"
-                          onClick={() => setSelectedUser(user)}
+                          onClick={() => handleViewUser(user)}
                           className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary hover:bg-primary/5 hover:text-primary"
                         >
                           <Eye size={16} />
@@ -345,75 +414,170 @@ const UserManagementPage = () => {
         />
       )}
 
-      {/* Selected User Details */}
+      {/* User Details Modal */}
       {selectedUser && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4"
+          className="fixed inset-0 z-100 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) {
               setSelectedUser(null);
             }
           }}
         >
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-heading">User Details</h2>
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            {/* Header */}
+            <div className="mb-2 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-heading">User Details</h2>
 
               <button
                 type="button"
                 onClick={() => setSelectedUser(null)}
-                className="rounded-lg px-3 py-1 text-slate-500 hover:bg-slate-100"
+                disabled={loading}
+                className="text-slate-400 transition hover:text-primary"
               >
-                ✕
+                <X size={21} />
               </button>
             </div>
 
-            <div className="mt-5 space-y-4">
+            {/* User Information */}
+            <div className="grid grid-cols-1 sm:grid-cols-2  space-y-4">
               <div>
-                <p className="text-xs text-slate-400">Full Name</p>
-                <p className="font-semibold text-heading">
-                  {selectedUser.full_name || selectedUser.username || "Unknown"}
+                <label className="text-xs font-medium text-muted">
+                  Full Name
+                </label>
+                <p className="text-sm font-semibold text-heading">
+                  {selectedUser.full_name}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs text-slate-400">Email</p>
-                <p className="text-sm text-slate-700">
-                  {selectedUser.email || "Not provided"}
-                </p>
+                <label className="text-xs font-medium text-muted">
+                  Phone Number
+                </label>
+                <p className="text-sm text-body">{selectedUser.phone_number}</p>
               </div>
 
               <div>
-                <p className="text-xs text-slate-400">Phone Number</p>
-                <p className="text-sm text-slate-700">
-                  {selectedUser.phone_number || "Not provided"}
-                </p>
+                <label className="text-xs font-medium text-muted">Email</label>
+                <p className="text-sm text-body">{selectedUser.email}</p>
               </div>
 
               <div>
-                <p className="text-xs text-slate-400">Role</p>
-                <p className="text-sm capitalize text-slate-700">
-                  {selectedUser.role || "Unknown"}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs text-slate-400">Joined Date</p>
-                <p className="text-sm text-slate-700">
-                  {getFormattedDateforDisplay(
-                    selectedUser.created_at || selectedUser.createdAt,
-                  ) || "Unknown"}
+                <label className="text-xs font-medium text-muted">
+                  Joined Date
+                </label>
+                <p className="text-sm text-body">
+                  {getFormattedDateforDisplay(selectedUser.created_at)}
                 </p>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setSelectedUser(null)}
-              className="mt-6 w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary-hover"
-            >
-              Close
-            </button>
+            {/* Account Management */}
+            <div className="mt-2 space-y-2 border-t border-slate-100 pt-3">
+              <h3 className="text-sm font-semibold text-heading">
+                Account Management
+              </h3>
+
+              {/* Role */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="user-role"
+                  className="text-sm font-medium text-body"
+                >
+                  User Role
+                </label>
+
+                <select
+                  id="user-role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  disabled={loading}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm capitalize text-heading outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+                >
+                  <option value={STUDENT_ROLE}>Student</option>
+                  <option value={TEACHER_ROLE}>Instructor</option>
+                  <option value={EDITOR_ROLE}>Editor</option>
+                </select>
+              </div>
+
+              {/* Account Status */}
+              <div className="flex items-center justify-between rounded-xl border border-slate-200 p-4">
+                <div>
+                  <p className="text-sm font-medium text-heading">
+                    Account Status
+                  </p>
+
+                  <p className="mt-1 text-xs text-muted">
+                    {isActive
+                      ? "User can access the platform."
+                      : "User access is currently disabled."}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={isActive}
+                  aria-label="Toggle user account status"
+                  disabled={loading}
+                  onClick={() => setIsActive((prev) => !prev)}
+                  className={`relative h-6 w-11 rounded-full transition-colors ${
+                    isActive ? "bg-success" : "bg-slate-300"
+                  } disabled:opacity-50`}
+                >
+                  <span
+                    className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow transition-all ${
+                      isActive ? "left-6" : "left-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Current Status */}
+              <div>
+                <span
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
+                    isActive
+                      ? "bg-green-50 text-green-700"
+                      : "bg-red-50 text-red-600"
+                  }`}
+                >
+                  {isActive ? "Active" : "Inactive"}
+                </span>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-4 flex gap-3">
+              <button
+                type="button"
+                onClick={handleUpdateUser}
+                disabled={
+                  loading ||
+                  (role === selectedUser.role &&
+                    isActive === selectedUser.is_active)
+                }
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedUser(null)}
+                disabled={loading}
+                className="w-full rounded-xl border border-slate-200 py-3 text-sm font-semibold text-body transition hover:bg-slate-50"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

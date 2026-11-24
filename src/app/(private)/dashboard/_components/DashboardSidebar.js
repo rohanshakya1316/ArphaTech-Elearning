@@ -1,43 +1,26 @@
 "use client";
 
 import {
+  dashboardNavigation,
+  dashboardRoutes,
+  roleLabels,
+} from "@/constants/dashboardNavigation";
+import { HOME_ROUTE } from "@/constants/routes";
+import {
   GraduationCap,
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  dashboardNavigation,
-  roleLabels,
-} from "@/constants/dashboardNavigation";
-import {
-  ADMIN_DASHBOARD_ROUTE,
-  HOME_ROUTE,
-  STUDENT_DASHBOARD_ROUTE,
-  TEACHER_DASHBOARD_ROUTE,
-} from "@/constants/routes";
-import Image from "next/image";
-
-const dashboardRoutes = [
-  STUDENT_DASHBOARD_ROUTE,
-  TEACHER_DASHBOARD_ROUTE,
-  ADMIN_DASHBOARD_ROUTE,
-];
 
 const SidebarNavItem = ({ item, pathname, collapsed, onNavigate }) => {
   const Icon = item.icon;
 
-  // Dashboard routes should also be active on their nested pages.
-  const isDashboard = dashboardRoutes.includes(item.href);
-
-  const isActive =
-    pathname === item.href ||
-    (!isDashboard && pathname.startsWith(`${item.href}/`));
-
-  const active = isActive || (isDashboard && pathname.startsWith(item.href));
+  const active = pathname === item.href;
 
   return (
     <Link
@@ -72,7 +55,7 @@ const SidebarNavItem = ({ item, pathname, collapsed, onNavigate }) => {
   );
 };
 
-export default function DashboardSidebar({
+const DashboardSidebar = ({
   role,
   user = {},
   mobileOpen = false,
@@ -80,7 +63,7 @@ export default function DashboardSidebar({
   onLogout,
   collapsed = false,
   onToggleCollapsed,
-}) {
+}) => {
   const pathname = usePathname();
 
   const normalizedRole = role?.toLowerCase();
@@ -245,4 +228,6 @@ export default function DashboardSidebar({
       </aside>
     </>
   );
-}
+};
+
+export default DashboardSidebar;
