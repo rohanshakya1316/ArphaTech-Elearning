@@ -122,7 +122,14 @@ const createUserByAdmin = (data) => {
 
 // Verify teacher documentation
 const verifyTeacherByAdmin = (phoneNumber, data) => {
-  return api.patch(`/api/v1/auth/admin/teachers/${phoneNumber}/verify/`, data);
+  return api.patch(`/api/v1/auth/admin/teachers/${phoneNumber}/verify/`, {
+    verified: data,
+  });
+};
+
+// Get Users By Phone Number
+const getUserDetailByAdmin = (phoneNumber) => {
+  return api.get(`/api/v1/auth/admin/users/${phoneNumber}/detail/`);
 };
 
 export {
@@ -143,6 +150,7 @@ export {
   updateUserByAdmin,
   createUserByAdmin,
   verifyTeacherByAdmin,
+  getUserDetailByAdmin,
 };
 
-// * AUTH ENDPOINTS COMPLETED 17
+// * AUTH ENDPOINTS COMPLETED 18
