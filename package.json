@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@embedpdf/viewer-react": "^3.3.0",
     "axios": "^1.19.0",
     "date-fns": "^4.4.0",
     "dotenv": "^17.4.2",
