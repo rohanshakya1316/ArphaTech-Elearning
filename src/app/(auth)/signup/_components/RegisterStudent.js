@@ -1,21 +1,9 @@
-import {
-  getClassLevelList,
-  getFacultyList,
-  getSchoolList,
-} from "@/api/academics";
+"use client";
+import { useInitialData } from "@/hooks/useInitialData";
 import StudentForm from "./StudentForm";
 
-const RegisterStudent = async () => {
-  const [schoolsList, facultiesList, classLevelList] = await Promise.all([
-    getSchoolList(),
-    getFacultyList(),
-    getClassLevelList(),
-  ]);
-
-  const institutes = schoolsList?.data ?? [];
-  const faculties = facultiesList?.data ?? [];
-  const classLevels = classLevelList?.data ?? [];
-  console.log(institutes);
+const RegisterStudent = () => {
+  const { institutes, faculties, classLevels } = useInitialData();
 
   return (
     <StudentForm
