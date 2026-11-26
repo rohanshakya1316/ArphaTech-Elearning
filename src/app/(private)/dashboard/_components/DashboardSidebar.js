@@ -6,6 +6,7 @@ import {
   roleLabels,
 } from "@/constants/dashboardNavigation";
 import { HOME_ROUTE } from "@/constants/routes";
+import { getImageUrl } from "@/helpers/getImage";
 import {
   GraduationCap,
   LogOut,
@@ -148,9 +149,9 @@ const DashboardSidebar = ({
               )}
 
               <div className="space-y-1">
-                {group.items.map((item) => (
+                {group.items.map((item, index) => (
                   <SidebarNavItem
-                    key={item.href}
+                    key={index}
                     item={item}
                     pathname={pathname}
                     collapsed={collapsed}
@@ -171,7 +172,7 @@ const DashboardSidebar = ({
           >
             {profileImage ? (
               <Image
-                src={profileImage}
+                src={getImageUrl(profileImage)}
                 alt={displayName}
                 width={10}
                 height={10}
