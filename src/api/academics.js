@@ -2,6 +2,7 @@ import config from "@/config/config";
 import axios from "axios";
 import api from "./api";
 
+// * Chapters Endpoints
 const getAllChapters = async () => {
   return await axios.get(`${config.apiUrl}/api/v1/academics/chapters/`);
 };
@@ -25,6 +26,7 @@ const deleteChapter = async (id) => {
   return await api.delete(`${config.apiUrl}/api/v1/academics/chapters/${id}/`);
 };
 
+// * Class Level Endpoints
 const getClassLevelList = async () => {
   return await axios.get(`${config.apiUrl}/api/v1/academics/class-levels/`);
 };
@@ -44,6 +46,7 @@ const updateClassLevel = async (id, data) => {
   );
 };
 
+// * Faculty Endpoints
 const getFacultyList = async () => {
   return await axios.get(`${config.apiUrl}/api/v1/academics/faculties/`);
 };
@@ -63,6 +66,7 @@ const updateFaculty = async (id, data) => {
   );
 };
 
+// * School Endpoints
 const getSchoolList = async () => {
   return await axios.get(`${config.apiUrl}/api/v1/academics/schools/`);
 };
@@ -92,12 +96,27 @@ const getMySchools = async () => {
   return await api.get(`${config.apiUrl}/api/v1/academics/schools/my_schools/`);
 };
 
-const getSubjectList = async () => {
-  return await axios.get(`${config.apiUrl}/api/v1/academics/subjects/`);
+// * Subject Endpoints
+const getSubjectList = async ({
+  page,
+  search = "",
+  class_level = "",
+  is_active = "",
+  faculty = "",
+} = {}) => {
+  return await axios.get(`${config.apiUrl}/api/v1/academics/subjects/`, {
+    params: {
+      page,
+      search: search || undefined,
+      class_level: class_level || undefined,
+      is_active: is_active || undefined,
+      faculty: faculty || undefined,
+    },
+  });
 };
 
-const createSubject = async () => {
-  return await api.post(`${config.apiUrl}/api/v1/academics/subjects/`);
+const createSubject = async (data) => {
+  return await api.post(`${config.apiUrl}/api/v1/academics/subjects/`, data);
 };
 
 const getSubjectDetail = async (id) => {
@@ -111,6 +130,7 @@ const updateSubject = async (id, data) => {
   );
 };
 
+// * Teacher School Affiliations Endpoints
 const getTeacherSchoolAffiliations = async () => {
   return await api.get(`${config.apiUrl}/api/v1/academics/teacher-schools/`);
 };
