@@ -198,7 +198,6 @@ const ChapterManagementPage = () => {
 
   // Create or update chapter
   const onSubmit = async (data) => {
-    console.log(subjects);
     let selectedSubject = null;
 
     if (!isEditing) {

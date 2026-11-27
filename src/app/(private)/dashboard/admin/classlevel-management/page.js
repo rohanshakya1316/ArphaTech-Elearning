@@ -167,6 +167,7 @@ const ClasslevelManagementPage = () => {
   const onSubmit = async (data) => {
     const payload = {
       name: data.name.trim(),
+      ...(!isEditing && { level_type: data.level_type }),
     };
 
     try {
