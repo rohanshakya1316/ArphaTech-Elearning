@@ -3,12 +3,24 @@ import axios from "axios";
 import api from "./api";
 
 // * Chapters Endpoints
-const getAllChapters = async () => {
-  return await axios.get(`${config.apiUrl}/api/v1/academics/chapters/`);
+const getAllChapters = async ({
+  page = 1,
+  search = "",
+  is_active = "",
+  subject = "",
+} = {}) => {
+  return await axios.get(`${config.apiUrl}/api/v1/academics/chapters/`, {
+    params: {
+      page: page,
+      search: search || undefined,
+      is_active: is_active || undefined,
+      subject: subject || undefined,
+    },
+  });
 };
 
-const createChapter = async () => {
-  return await api.post(`${config.apiUrl}/api/v1/academics/chapters/`);
+const createChapter = async (data) => {
+  return await api.post(`${config.apiUrl}/api/v1/academics/chapters/`, data);
 };
 
 const getChapterDetail = async (id) => {
@@ -27,12 +39,25 @@ const deleteChapter = async (id) => {
 };
 
 // * Class Level Endpoints
-const getClassLevelList = async () => {
-  return await axios.get(`${config.apiUrl}/api/v1/academics/class-levels/`);
+const getClassLevelList = async ({
+  page = 1,
+  search = "",
+  levelType = "",
+} = {}) => {
+  return await axios.get(`${config.apiUrl}/api/v1/academics/class-levels/`, {
+    params: {
+      page: page,
+      search: search || undefined,
+      level_type: levelType || undefined,
+    },
+  });
 };
 
-const createClassLevel = async () => {
-  return await api.post(`${config.apiUrl}/api/v1/academics/class-levels/`);
+const createClassLevel = async (data) => {
+  return await api.post(
+    `${config.apiUrl}/api/v1/academics/class-levels/`,
+    data,
+  );
 };
 
 const getClassLevelDetail = async (id) => {
@@ -47,12 +72,17 @@ const updateClassLevel = async (id, data) => {
 };
 
 // * Faculty Endpoints
-const getFacultyList = async () => {
-  return await axios.get(`${config.apiUrl}/api/v1/academics/faculties/`);
+const getFacultyList = async ({ page = 1, search = "" } = {}) => {
+  return await axios.get(`${config.apiUrl}/api/v1/academics/faculties/`, {
+    params: {
+      page: page,
+      search: search || undefined,
+    },
+  });
 };
 
-const createFaculty = async () => {
-  return await api.post(`${config.apiUrl}/api/v1/academics/faculties/`);
+const createFaculty = async (data) => {
+  return await api.post(`${config.apiUrl}/api/v1/academics/faculties/`, data);
 };
 
 const getFacultyDetail = async (id) => {
@@ -71,8 +101,8 @@ const getSchoolList = async () => {
   return await axios.get(`${config.apiUrl}/api/v1/academics/schools/`);
 };
 
-const createSchool = async () => {
-  return await api.post(`${config.apiUrl}/api/v1/academics/schools/`);
+const createSchool = async (data) => {
+  return await api.post(`${config.apiUrl}/api/v1/academics/schools/`, data);
 };
 
 const getSchoolDetails = async (id) => {
