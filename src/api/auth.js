@@ -89,6 +89,49 @@ const logout = async (refreshToken) => {
   });
 };
 
+// * Admin Only endpoints
+
+// Get all users by admin only
+const getAllUsersByAdmin = ({
+  page,
+  search = "",
+  role = "",
+  is_active = "",
+  ordering = "",
+} = {}) => {
+  return api.get("/api/v1/auth/admin/users/", {
+    params: {
+      page,
+      search: search || undefined,
+      role: role || undefined,
+      is_active: is_active || undefined,
+      ordering: ordering || undefined,
+    },
+  });
+};
+
+// Update user role and activate/deactivate
+const updateUserByAdmin = (phoneNumber, data) => {
+  return api.patch(`/api/v1/auth/admin/users/${phoneNumber}/`, data);
+};
+
+// Create Editor by admin only
+const createUserByAdmin = (data) => {
+  return api.post("/api/v1/auth/admin/users/create/", data);
+};
+
+// Verify teacher documentation
+const verifyTeacherByAdmin = (phoneNumber, data) => {
+  return api.patch(`/api/v1/auth/admin/teachers/${phoneNumber}/verify/`, {
+    verified: data,
+  });
+};
+
+// Get Users By Phone Number
+const getUserDetailByAdmin = (phoneNumber) => {
+  return api.get(`/api/v1/auth/admin/users/${phoneNumber}/detail/`);
+};
+
 export {
   sendOTP,
   verifyOTP,
@@ -103,4 +146,11 @@ export {
   updateStudentProfile,
   updateTeacherProfile,
   logout,
+  getAllUsersByAdmin,
+  updateUserByAdmin,
+  createUserByAdmin,
+  verifyTeacherByAdmin,
+  getUserDetailByAdmin,
 };
+
+// * AUTH ENDPOINTS COMPLETED 18

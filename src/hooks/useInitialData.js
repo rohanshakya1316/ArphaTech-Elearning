@@ -30,10 +30,10 @@ export const useInitialData = () => {
           getClassLevelList(),
         ]);
 
-        setSubjects(subjectsListResponse.data);
-        setFaculties(facultiesListResponse.data);
-        setInstitutes(schoolsListResponse.data);
-        setClassLevels(classLevelsListResponse.data);
+        setSubjects(subjectsListResponse.data?.results);
+        setFaculties(facultiesListResponse.data?.results);
+        setInstitutes(schoolsListResponse.data?.results);
+        setClassLevels(classLevelsListResponse.data?.results);
       } catch (err) {
         setError(err);
         console.error(err);

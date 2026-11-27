@@ -1,42 +1,27 @@
 "use client";
 
 import {
+  dashboardNavigation,
+  dashboardRoutes,
+  roleLabels,
+} from "@/constants/dashboardNavigation";
+import { HOME_ROUTE } from "@/constants/routes";
+import { getImageUrl } from "@/helpers/getImage";
+import {
   GraduationCap,
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  dashboardNavigation,
-  roleLabels,
-} from "@/constants/dashboardNavigation";
-import {
-  ADMIN_DASHBOARD_ROUTE,
-  STUDENT_DASHBOARD_ROUTE,
-  TEACHER_DASHBOARD_ROUTE,
-} from "@/constants/routes";
-import Image from "next/image";
-
-const dashboardRoutes = [
-  STUDENT_DASHBOARD_ROUTE,
-  TEACHER_DASHBOARD_ROUTE,
-  ADMIN_DASHBOARD_ROUTE,
-];
 
 const SidebarNavItem = ({ item, pathname, collapsed, onNavigate }) => {
   const Icon = item.icon;
 
-  // Dashboard routes should also be active on their nested pages.
-  const isDashboard = dashboardRoutes.includes(item.href);
-
-  const isActive =
-    pathname === item.href ||
-    (!isDashboard && pathname.startsWith(`${item.href}/`));
-
-  const active = isActive || (isDashboard && pathname.startsWith(item.href));
+  const active = pathname === item.href;
 
   return (
     <Link
@@ -71,7 +56,7 @@ const SidebarNavItem = ({ item, pathname, collapsed, onNavigate }) => {
   );
 };
 
-export default function DashboardSidebar({
+const DashboardSidebar = ({
   role,
   user = {},
   mobileOpen = false,
@@ -79,15 +64,15 @@ export default function DashboardSidebar({
   onLogout,
   collapsed = false,
   onToggleCollapsed,
-}) {
+}) => {
   const pathname = usePathname();
 
   const normalizedRole = role?.toLowerCase();
   const navigation = dashboardNavigation[normalizedRole] || [];
 
-  const displayName = user.full_name || user.name || "User";
+  const displayName = user.full_name || "User";
   const email = user.email || "";
-  const profileImage = user.profile_image || user.profile_picture;
+  const profileImage = user.profile?.profile_image;
 
   const handleNavigate = () => {
     onClose?.();
@@ -122,7 +107,7 @@ export default function DashboardSidebar({
           }`}
         >
           <Link
-            href="/"
+            href={HOME_ROUTE}
             onClick={handleNavigate}
             className="flex min-w-0 items-center gap-2.5"
           >
@@ -164,9 +149,9 @@ export default function DashboardSidebar({
               )}
 
               <div className="space-y-1">
-                {group.items.map((item) => (
+                {group.items.map((item, index) => (
                   <SidebarNavItem
-                    key={item.href}
+                    key={index}
                     item={item}
                     pathname={pathname}
                     collapsed={collapsed}
@@ -181,14 +166,16 @@ export default function DashboardSidebar({
         {/* Bottom section */}
         <div className="shrink-0 border-t border-slate-100 p-3">
           <div
-            className={`flex items-center gap-3 rounded-lg p-2 ${
-              collapsed ? "justify-center" : ""
+            className={`flex items-center gap-3 rounded-lg p-2 transition-all ${
+              collapsed ? "flex-col justify-center" : ""
             }`}
           >
             {profileImage ? (
               <Image
-                src={profileImage}
+                src={getImageUrl(profileImage)}
                 alt={displayName}
+                width={10}
+                height={10}
                 className="h-9 w-9 shrink-0 rounded-full object-cover"
               />
             ) : (
@@ -242,4 +229,6 @@ export default function DashboardSidebar({
       </aside>
     </>
   );
-}
+};
+
+export default DashboardSidebar;

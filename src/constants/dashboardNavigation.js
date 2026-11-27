@@ -11,23 +11,46 @@ import {
   GraduationCap,
   LayoutDashboard,
   MessageSquare,
+  School,
   Settings,
   UserRound,
   Users,
 } from "lucide-react";
 import { ADMIN_ROLE, STUDENT_ROLE, TEACHER_ROLE } from "./roles";
 import {
+  ADMIN_DASHBOARD_ROUTE,
+  CHAPTER_MANAGEMENT_ROUTE,
+  CLASSLEVEL_MANAGEMENT_ROUTE,
+  FACULTY_MANAGEMENT_ROUTE,
   PROFILE_ROUTE,
+  SCHOOL_MANAGEMENT_ROUTE,
   STUDENT_DASHBOARD_ROUTE,
+  SUBJECT_MANAGEMENT_ROUTE,
   TEACHER_DASHBOARD_ROUTE,
   TEACHER_NOTE_ROUTE,
+  USER_MANAGEMENT_ROUTE,
+  VERIFY_TEACHER_ROUTE,
 } from "./routes";
+import {
+  MdClass,
+  MdFlightClass,
+  MdOutlinePlayLesson,
+  MdSubject,
+} from "react-icons/md";
+import { GrChapterPrevious } from "react-icons/gr";
+import { FaGraduationCap } from "react-icons/fa";
 
 export const roleLabels = {
   [STUDENT_ROLE]: "Student Portal",
   [TEACHER_ROLE]: "Teacher Portal",
   [ADMIN_ROLE]: "Administration",
 };
+
+export const dashboardRoutes = [
+  STUDENT_DASHBOARD_ROUTE,
+  TEACHER_DASHBOARD_ROUTE,
+  ADMIN_DASHBOARD_ROUTE,
+];
 
 export const dashboardNavigation = {
   [STUDENT_ROLE]: [
@@ -81,7 +104,7 @@ export const dashboardNavigation = {
       items: [
         {
           label: "My Profile",
-          href: "/student/profile",
+          href: PROFILE_ROUTE,
           icon: UserRound,
         },
         {
@@ -157,7 +180,7 @@ export const dashboardNavigation = {
       items: [
         {
           label: "Dashboard",
-          href: "/admin/dashboard",
+          href: ADMIN_DASHBOARD_ROUTE,
           icon: LayoutDashboard,
         },
         {
@@ -171,29 +194,44 @@ export const dashboardNavigation = {
       title: "Management",
       items: [
         {
-          label: "Students",
-          href: "/admin/students",
-          icon: GraduationCap,
-        },
-        {
-          label: "Teachers",
-          href: "/admin/teachers",
+          label: "Users",
+          href: USER_MANAGEMENT_ROUTE,
           icon: Users,
         },
         {
-          label: "Courses",
-          href: "/admin/courses",
-          icon: BookOpen,
+          label: "Verify Teacher",
+          href: VERIFY_TEACHER_ROUTE,
+          icon: UserRound,
+        },
+        {
+          label: "Subjects",
+          href: SUBJECT_MANAGEMENT_ROUTE,
+          icon: MdSubject,
+        },
+        {
+          label: "Chapters",
+          href: CHAPTER_MANAGEMENT_ROUTE,
+          icon: MdOutlinePlayLesson,
+        },
+        {
+          label: "Class Levels",
+          href: CLASSLEVEL_MANAGEMENT_ROUTE,
+          icon: MdFlightClass,
+        },
+        {
+          label: "Faculties",
+          href: FACULTY_MANAGEMENT_ROUTE,
+          icon: FaGraduationCap,
+        },
+        {
+          label: "Schools",
+          href: SCHOOL_MANAGEMENT_ROUTE,
+          icon: School,
         },
         {
           label: "Study Notes",
           href: "/admin/notes",
           icon: FileText,
-        },
-        {
-          label: "Categories",
-          href: "/admin/categories",
-          icon: FolderOpen,
         },
       ],
     },
@@ -222,7 +260,7 @@ export const dashboardNavigation = {
       items: [
         {
           label: "My Profile",
-          href: "/admin/profile",
+          href: PROFILE_ROUTE,
           icon: UserRound,
         },
         {

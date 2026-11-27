@@ -6,3 +6,6 @@
 
 # Forget/Reset Password done for unauthorized user, for authorized using change password feature needed
 
+# Teacher Dashboard for Notes completed ===> other dashboard activites are remaining. 
+
+# Admin Dashboard for user management is completed (teacher verification needed) ==> Next starting with the academics sections for admin.

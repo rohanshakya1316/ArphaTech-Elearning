@@ -1,8 +1,11 @@
-import { STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
+import { ADMIN_ROLE, STUDENT_ROLE, TEACHER_ROLE } from "@/constants/roles";
 import {
+  ADMIN_DASHBOARD_ROUTE,
+  DASHBOARD_ROUTE,
   FORGOT_PASSWORD_ROUTE,
   HOME_ROUTE,
   LOGIN_ROUTE,
+  PROFILE_ROUTE,
   REGISTER_ROUTE,
   REGISTER_STUDENT_ROUTE,
   REGISTER_TEACHER_ROUTE,
@@ -39,8 +42,8 @@ export const getAuthRedirect = ({ authState, userRole, pathname }) => {
   const isRegistrationRoute = isStudentRegister || isTeacherRegister;
 
   const isProtectedRoute =
-    pathname.startsWith("/dashboard") ||
-    pathname.startsWith("/profile") ||
+    pathname.startsWith(DASHBOARD_ROUTE) ||
+    pathname.startsWith(PROFILE_ROUTE) ||
     pathname.startsWith("/courses");
 
   // Home page is accessible to everyone
@@ -90,6 +93,10 @@ export const getAuthRedirect = ({ authState, userRole, pathname }) => {
   // Fully authenticated user
   if (isAuthenticated) {
     if (isPublicRoute || isOTPRoute || isRegistrationRoute) {
+      if (userRole === ADMIN_ROLE) {
+        return ADMIN_DASHBOARD_ROUTE;
+      }
+      
       if (userRole === STUDENT_ROLE) {
         return STUDENT_DASHBOARD_ROUTE;
       }
