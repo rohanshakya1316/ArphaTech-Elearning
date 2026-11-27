@@ -131,7 +131,15 @@ const SubjectManagementPage = () => {
     return () => {
       isMounted = false;
     };
-  }, [currentPage, search, facultyFilter, classLevelFilter, activeFilter, selectedSubject]);
+  }, [
+    currentPage,
+    search,
+    facultyFilter,
+    classLevelFilter,
+    activeFilter,
+    selectedSubject,
+    saving,
+  ]);
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
