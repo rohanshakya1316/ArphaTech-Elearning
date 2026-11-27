@@ -65,6 +65,7 @@ const SubjectManagementPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   // Modal
   const [showModal, setShowModal] = useState(false);
@@ -137,8 +138,7 @@ const SubjectManagementPage = () => {
     facultyFilter,
     classLevelFilter,
     activeFilter,
-    selectedSubject,
-    saving,
+    refresh,
   ]);
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
@@ -197,6 +197,7 @@ const SubjectManagementPage = () => {
       setShowModal(false);
       setSelectedSubject(null);
       reset(initialFormData);
+      setRefresh((prev) => !prev);
     } catch (error) {
       console.error("Subject save error:", error);
       toast.error(getErrorMessage(error));
